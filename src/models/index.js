@@ -1,14 +1,6 @@
 import Sequelize from 'sequelize';
 
-const sequelize = new Sequelize(
-  process.env.DATABASE,
-  process.env.DATABASE_USER,
-  process.env.DATABASE_PASSWORD,
-  {
-    dialect: 'postgres',
-    port: process.env.DATABASE_PORT,
-  }
-);
+const sequelize = new Sequelize(process.env.DATABASE_URL);
 
 // reverse-polyfill function since sequelize removed .import function in v6
 const importModel = (relativePath) => {
