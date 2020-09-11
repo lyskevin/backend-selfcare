@@ -1,9 +1,10 @@
 # Self-care backend
 
 ## Getting started
-- Install dependencies with `npm i`
-- Create `.env` file in root directory with fields in `.env.template`
-- Run `npm start`
+- Install [Docker](https://www.docker.com/) (if you don't already have it)
+- Run `docker-compose up`
+- Use `CTRL + C` to stop the process once you are done
+- Run `docker-compose down`
 
 ## How to talk to DB?
 We are using sequelize.js as ORM. All CRUD operations can be done via sequelize from the backend.
