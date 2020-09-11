@@ -2,6 +2,7 @@
 
 ## Getting started
 - Install [Docker](https://www.docker.com/) (if you don't already have it)
+- Run `npm i` to install local dependencies
 - Run `docker-compose up`
 - Use `CTRL + C` to stop the process once you are done
 - Run `docker-compose down`
@@ -11,4 +12,4 @@ We are using sequelize.js as ORM. All CRUD operations can be done via sequelize 
 
 ## Testing API call
 - Install `curl`
-- On a separate terminal from the server, run `curl -X GET http://localhost:8080/users/` and you should get a json response of an example user
+- On a separate terminal from the server, run `curl -X GET http://localhost:3000/users/` and you should get a json response of an example user
