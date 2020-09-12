@@ -18,6 +18,9 @@ const soundFile = (sequelize, DataTypes) => {
     SoundFile.hasOne(models.UnopenedMessage, {
       foreignKey: 'voice_message',
     });
+    SoundFile.hasOne(models.Message, {
+      foreignKey: 'voice_message',
+    });
   }
 
   return SoundFile;
