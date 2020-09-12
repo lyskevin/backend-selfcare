@@ -7,9 +7,6 @@ const unopenedMessage = (sequelize, DataTypes) => {
         defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
       },
-      user_id: {
-        type: DataTypes.INTEGER,
-      },
     },
     {
       timestamps: true,
@@ -20,6 +17,9 @@ const unopenedMessage = (sequelize, DataTypes) => {
   UnopenedMessage.associate = (models) => {
     UnopenedMessage.belongsTo(models.SoundFile, {
       foreignKey: 'voice_message',
+    });
+    UnopenedMessage.belongsTo(models.User, {
+      foreignKey: 'user_id',
     });
   };
 
