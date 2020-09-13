@@ -26,6 +26,18 @@ const user = (sequelize, DataTypes) => {
     });
     User.hasOne(models.Message, {
       foreignKey: 'user_id',
+    });
+    User.hasMany(models.Conversation, {
+      as: 'firstUser',
+      foreignKey: {
+        name: 'first_user_id',
+      }
+    });
+    User.hasMany(models.Conversation, {
+      as: 'secondUser',
+      foreignKey: {
+        name: 'second_user_id',
+      }
     })
   };
 
