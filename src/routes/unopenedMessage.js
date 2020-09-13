@@ -20,19 +20,6 @@ router.post('/', async (req, res) => {
   res.send(unopenedMessage);
 });
 
-router.put('/:unopenedMessageId', async (req, res) => {
-  var unopenedMessage = await req.context.models.UnopenedMessage.findByPk(req.params.unopenedMessageId);
-  if (unopenedMessage) {
-    unopenedMessage = await req.context.models.UnopenedMessage.upsert({
-      id: req.params.UnopenedMessageId,
-      url: req.query.url,
-    }, {
-      returning: true
-    });
-  }
-  res.send(unopenedMessage[0]);
-});
-
 router.delete('/:unopenedMessageId', async (req, res) => {
   await req.context.models.UnopenedMessage.destroy({
     where: {
