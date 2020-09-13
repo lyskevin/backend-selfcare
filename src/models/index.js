@@ -11,6 +11,10 @@ const models = {
   User: importModel('./user'),
   Journal: importModel('./journal'),
   JournalPage: importModel('./journalPage'),
+  UnopenedMessage: importModel('./unopenedMessage'),
+  SoundFile: importModel('./soundFile'),
+  Message: importModel('./message'),
+  Conversation: importModel('./conversation')
 };
 
 Object.keys(models).forEach((key) => {
@@ -20,9 +24,35 @@ Object.keys(models).forEach((key) => {
 });
 
 const seedData = async () => {
-  await models.User.create({
+  const alice = await models.User.create({
+    name: 'ally',
+    alias: 'alice',
+  });
+
+  const bob = await models.User.create({
     name: 'robert',
     alias: 'bob',
+  });
+
+  const soundFile = await models.SoundFile.create({
+    url: 'test.com',
+  });
+
+  await models.UnopenedMessage.create({}).then((result) => {
+    result.setSoundFile(soundFile);
+    result.setUser(alice);
+  });
+
+  const conversation = await models.Conversation.create({
+    open: true,
+  });
+  await conversation.setFirstUser(alice);
+  await conversation.setSecondUser(bob);
+  
+  await models.Message.create({}).then((result) => {
+    result.setSoundFile(soundFile);
+    result.setUser(alice);
+    result.setConversation(conversation);
   });
 };
 
