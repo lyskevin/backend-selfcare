@@ -22,8 +22,6 @@ router.post('/', async (req, res) => {
   res.send(message);
 });
 
-// No put because of message's foreign keys
-
 router.delete('/:messageId', async (req, res) => {
   await req.context.models.Message.destroy({
     where: {
