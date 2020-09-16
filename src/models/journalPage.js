@@ -28,8 +28,10 @@ const journalPage = (sequelize, DataTypes) => {
 
   JournalPage.association = (models) => {
     JournalPage.belongsTo(models.Journal, {
+      as: 'journal',
       foreignKey: 'journal_id',
     });
+    JournalPage.hasMany(models.JournalBlock, { onDelete: 'CASCADE' });
   };
 
   return JournalPage;

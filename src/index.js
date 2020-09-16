@@ -25,6 +25,8 @@ sequelize
   .catch((err) => console.log(err));
 
 app.use('/users', routes.user);
+app.use('/journalPages', routes.journalPage);
+app.use('/journalBlocks', routes.journalBlock);
 app.use('/soundFiles', routes.soundFile);
 app.use('/unopenedMessages', routes.unopenedMessage);
 app.use('/messages', routes.message);
