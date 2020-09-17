@@ -13,6 +13,12 @@ const user = (sequelize, DataTypes) => {
       alias: {
         type: DataTypes.STRING,
       },
+      username: {
+        type: DataTypes.STRING,
+      },
+      password: {
+        type: DataTypes.STRING,
+      },
     },
     {
       timestamps: true,
@@ -31,14 +37,14 @@ const user = (sequelize, DataTypes) => {
       as: 'firstUser',
       foreignKey: {
         name: 'first_user_id',
-      }
+      },
     });
     User.hasMany(models.Conversation, {
       as: 'secondUser',
       foreignKey: {
         name: 'second_user_id',
-      }
-    })
+      },
+    });
   };
 
   return User;
