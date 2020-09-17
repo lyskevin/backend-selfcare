@@ -2,6 +2,7 @@
 
 ## Getting started
 
+- Create a `.env` file in the root directory by renaming the `.env.template` file. You will need the confidential information used for certain environment variables.
 - Install [Docker](https://www.docker.com/) (if you don't already have it)
 - Run `docker-compose up`
 - Use `CTRL + C` to stop the process once you are done
