@@ -1,29 +1,28 @@
-const soundFile = (sequelize, DataTypes) => {
-  const SoundFile = sequelize.define(
-    'soundFiles',
-    {
-      id: {
-        type: DataTypes.UUID,
-        defaultValue: DataTypes.UUIDV4,
-        primaryKey: true,
-      },
-      url: DataTypes.TEXT,
+import db from '../config/database';
+import { DataTypes } from 'sequelize';
+
+const SoundFile = db.define(
+  'soundFiles',
+  {
+    id: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      primaryKey: true,
     },
-    {
-      timestamps: false,
-    }
-  );
-
-  SoundFile.associate = (models) => {
-    SoundFile.hasOne(models.UnopenedMessage, {
-      foreignKey: 'voice_message',
-    });
-    SoundFile.hasOne(models.Message, {
-      foreignKey: 'voice_message',
-    });
+    url: DataTypes.TEXT,
+  },
+  {
+    timestamps: false,
   }
+);
 
-  return SoundFile;
+SoundFile.associate = (models) => {
+  SoundFile.hasOne(models.UnopenedMessage, {
+    foreignKey: 'voice_message',
+  });
+  SoundFile.hasOne(models.Message, {
+    foreignKey: 'voice_message',
+  });
 };
 
-export default soundFile;
+export default SoundFile;

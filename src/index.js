@@ -1,7 +1,8 @@
 import 'dotenv/config';
 import cors from 'cors';
 import express from 'express';
-import { sequelize, seedData } from './models';
+import db from './config/database';
+import { seedData } from './models';
 import { context } from './middleware';
 import routes from './routes';
 import passportConfig from './config/passport';
@@ -16,8 +17,7 @@ passportConfig(passport);
 
 const eraseDatabaseOnSync = true;
 
-sequelize
-  .sync({ force: eraseDatabaseOnSync })
+db.sync({ force: eraseDatabaseOnSync })
   .then(() => {
     seedData();
 
