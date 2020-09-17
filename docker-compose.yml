@@ -18,6 +18,7 @@ services:
       DATABASE_URL: postgres://postgres:postgres@database:5432/selfcare
     volumes:
       - ./:/home/node/app
+      - /home/node/app/node_modules/
     ports:
       - 3000:3000
     depends_on:
