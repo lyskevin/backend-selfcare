@@ -1,6 +1,5 @@
 import { Router } from 'express';
-// import bcrypt from 'bcrypt';
-// import { issueJwt } from '../lib/utils';
+import bcrypt from 'bcrypt';
 import issueJwt from '../lib/utils';
 import passport from 'passport';
 
@@ -10,17 +9,6 @@ router.get('/', async (req, res) => {
   const { User } = req.context.models;
   const allUsers = await User.findAll();
   res.send(allUsers);
-});
-
-router.get('/:userId', async (req, res) => {
-  const { User } = req.context.models;
-
-  const user = await User.findAll({
-    where: {
-      id: req.params.userId,
-    },
-  });
-  res.send(user);
 });
 
 router.get(
@@ -35,20 +23,23 @@ router.post('/login', async (req, res) => {
   const { User } = req.context.models;
   const { username, password } = req.body;
 
-  const user = await User.findOne({ where: { username } });
+  try {
+    const user = await User.findOne({ where: { username } });
 
-  if (!user) {
-    res.status(401).json({ success: false });
-  }
+    if (!user) {
+      res.status(401).json({ success: false });
+    }
 
-  // TODO: replace this with Bcrypt salt hash
-  const isValid = password == user.password;
+    const isValid = await bcrypt.compare(password, User.password);
 
-  if (isValid) {
-    const { token, expiresIn } = issueJwt(user);
-    res.status(200).json({ success: true, user, token, expiresIn });
-  } else {
-    res.status(401).json({ success: false, msg: 'wrong password' });
+    if (isValid) {
+      const { token, expiresIn } = issueJwt(user);
+      res.status(200).json({ success: true, user, token, expiresIn });
+    } else {
+      res.status(401).json({ success: false, msg: 'wrong password' });
+    }
+  } catch (e) {
+    console.log(e);
   }
 });
 
@@ -57,17 +48,16 @@ router.post('/register', async (req, res) => {
 
   const { username, password } = req.body;
 
-  // TODO: Replace this block when bcrypt is usable
-  const user = await User.create({ username, password });
-  const { token, expiresIn } = issueJwt(user);
-  res.json({ success: true, user, token, expiresIn });
+  try {
+    const salt = await bcrypt.genSalt(parseInt(process.env.SALT_ROUNDS));
+    const hash = await bcrypt.hash(password, salt);
 
-  // docker-compose somehow not installing bcrypt in container
-  // bcrypt.hash(password, process.env.SALT, async (hashedPassword) => {
-  //   const user = await User.create({ username, password: hashedPassword });
-  //   const { token, expiresIn } = issueJwt(user);
-  //   res.json({ success: true, user, token, expiresIn });
-  // });
+    const user = await User.create({ username, password: hash });
+    const { token, expires } = issueJwt(user);
+    res.json({ success: true, user, token, expires });
+  } catch (e) {
+    console.log(e);
+  }
 });
 
 export default router;

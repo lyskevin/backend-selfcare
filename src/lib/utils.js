@@ -19,5 +19,4 @@ function issueJWT(user) {
   };
 }
 
-// export { issueJWT };
 export default issueJWT;

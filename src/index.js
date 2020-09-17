@@ -13,6 +13,9 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(context);
+
+// Passport authorization
+app.use(passport.initialize());
 passportConfig(passport);
 
 const eraseDatabaseOnSync = true;
