@@ -1,9 +1,11 @@
 import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
+
 /**
  * @param {*} user - The user object.  We need this to set the JWT `sub` payload property to the user ID
  */
-function issueJWT(user) {
-  const id = user.id;
+function issueJwt(user) {
+  const { id } = user;
   const expiresIn = '1d';
 
   const payload = {
@@ -19,4 +21,10 @@ function issueJWT(user) {
   };
 }
 
-export default issueJWT;
+async function hashPassword(password) {
+  const salt = await bcrypt.genSalt(parseInt(process.env.SALT_ROUNDS));
+  const hash = await bcrypt.hash(password, salt);
+  return hash;
+}
+
+export { issueJwt, hashPassword };

@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import bcrypt from 'bcrypt';
-import issueJwt from '../lib/utils';
+import { issueJwt, hashPassword } from '../lib/utils';
 import passport from 'passport';
 
 const router = Router();
@@ -43,14 +43,32 @@ router.post('/login', async (req, res) => {
   }
 });
 
+router.get('/facebook', passport.authenticate('facebook'));
+
+router.get(
+  '/callback',
+  passport.authenticate('facebook', {
+    failureRedirect: '/fail',
+    session: false,
+  }),
+  (req, res) => {
+    const { user } = req;
+    const { token, expires } = issueJwt(user);
+    res.status(200).send({ user, token, expires });
+  }
+);
+
+router.get('/fail', (req, res) =>
+  res.status(401).send('Failed to login to Facebook')
+);
+
 router.post('/register', async (req, res) => {
   const { User } = req.context.models;
 
   const { username, password } = req.body;
 
   try {
-    const salt = await bcrypt.genSalt(parseInt(process.env.SALT_ROUNDS));
-    const hash = await bcrypt.hash(password, salt);
+    const hash = await hashPassword(password);
 
     const user = await User.create({ username, password: hash });
     const { token, expires } = issueJwt(user);

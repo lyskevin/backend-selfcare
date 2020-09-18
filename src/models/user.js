@@ -21,6 +21,9 @@ const User = db.define(
     password: {
       type: DataTypes.STRING,
     },
+    fbId: {
+      type: DataTypes.STRING,
+    },
   },
   {
     timestamps: true,
