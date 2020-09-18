@@ -21,9 +21,6 @@ const user = (sequelize, DataTypes) => {
   );
 
   User.associate = (models) => {
-    User.hasOne(models.UnopenedMessage, {
-      foreignKey: 'user_id',
-    });
     User.hasOne(models.Message, {
       foreignKey: 'user_id',
     });
