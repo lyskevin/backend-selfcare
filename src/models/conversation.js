@@ -7,9 +7,6 @@ const conversation = (sequelize, DataTypes) => {
         defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
       },
-      open: {
-        type: DataTypes.BOOLEAN,
-      }
     },
     {
       timestamps: false,
