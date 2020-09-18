@@ -12,6 +12,18 @@ router.get('/:messageId', async (req, res) => {
   res.send(message);
 });
 
+router.get('/conversationId/:conversationId', async (req, res) => {
+  const message = await req.context.models.Message.findAll({
+    where: {
+      conversation_id: req.params.conversationId,
+    },
+    order: [
+      ['createdAt', 'ASC'],
+    ]
+  });
+  res.send(message);
+});
+
 router.post('/', async (req, res) => {
   const message = await req.context.models.Message.create({
     conversation_id: req.query.conversationId,
