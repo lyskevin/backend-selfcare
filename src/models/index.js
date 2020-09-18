@@ -11,7 +11,6 @@ const models = {
   User: importModel('./user'),
   Journal: importModel('./journal'),
   JournalPage: importModel('./journalPage'),
-  UnopenedMessage: importModel('./unopenedMessage'),
   SoundFile: importModel('./soundFile'),
   Message: importModel('./message'),
   Conversation: importModel('./conversation')
@@ -38,18 +37,13 @@ const seedData = async () => {
     url: 'test.com',
   });
 
-  await models.UnopenedMessage.create({}).then((result) => {
-    result.setSoundFile(soundFile);
-    result.setUser(alice);
-  });
-
-  const conversation = await models.Conversation.create({
-    open: true,
-  });
+  const conversation = await models.Conversation.create();
   await conversation.setFirstUser(alice);
   await conversation.setSecondUser(bob);
   
-  await models.Message.create({}).then((result) => {
+  await models.Message.create({
+    is_open: false,
+  }).then((result) => {
     result.setSoundFile(soundFile);
     result.setUser(alice);
     result.setConversation(conversation);
