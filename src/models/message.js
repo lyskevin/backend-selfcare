@@ -7,6 +7,9 @@ const message = (sequelize, DataTypes) => {
         defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
       },
+      is_open: {
+        type: DataTypes.BOOLEAN,
+      },
     },
     {
       timestamps: true,
@@ -22,12 +25,6 @@ const message = (sequelize, DataTypes) => {
     });
     Message.belongsTo(models.User, {
       foreignKey: 'user_id',
-    });
-    Message.belongsTo(Message, {
-      foreignKey: 'previous_message',
-    });
-    Message.hasOne(Message, {
-      foreignKey: 'previous_message',
     });
     Message.belongsTo(models.Conversation, {
       foreignKey: 'conversation_id',
