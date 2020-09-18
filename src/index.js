@@ -30,6 +30,7 @@ db.sync({ force: eraseDatabaseOnSync })
   })
   .catch((err) => console.log(err));
 
+app.use('/auth', routes.auth);
 app.use('/users', routes.user);
 app.use('/journalPages', routes.journalPage);
 app.use('/journalBlocks', routes.journalBlock);

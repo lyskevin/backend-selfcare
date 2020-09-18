@@ -1,40 +1,35 @@
-import passport from 'passport';
 import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
 import { Strategy as FbStrategy } from 'passport-facebook';
 import models from '../models';
 
 const { User } = models;
 
-// passport.serializeUser((user, cb) => {
-//   cb(null, user);
-// });
-
-// passport.deserializeUser((user, cb) => {
-//   cb(null, user);
-// });
-
 const options = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
   secretOrKey: process.env.SECRET,
 };
 
-const jwtStrategy = new JwtStrategy(options, (payload, done) => {
-  User.findByPk(payload.sub)
-    .then((user) => done(null, user || false))
-    .catch((err) => done(err, null));
+const jwtStrategy = new JwtStrategy(options, async (payload, done) => {
+  try {
+    const user = await User.findByPk(payload.sub);
+    return done(null, user || false);
+  } catch (e) {
+    console.log(e);
+    done(e, null);
+  }
 });
 
 const fbStrategy = new FbStrategy(
   {
     clientID: process.env['FB_ID'],
     clientSecret: process.env['FB_SECRET'],
-    callbackURL: '/users/callback',
+    callbackURL: '/auth/callback',
   },
-  (accessToken, refreshToken, profile, done) => {
-    console.log('hello');
-    User.findOrCreate({ where: { fbId: profile.id } })
-      .then((user) => done(null, user))
-      .catch((err) => done(err, null));
+  async (accessToken, refreshToken, profile, done) => {
+    const [user, created] = await User.findOrCreate({
+      where: { fbId: profile.id },
+    });
+    return done(null, user);
   }
 );
 
