@@ -26,6 +26,5 @@ sequelize
 
 app.use('/users', routes.user);
 app.use('/soundFiles', routes.soundFile);
-app.use('/unopenedMessages', routes.unopenedMessage);
 app.use('/messages', routes.message);
 app.use('/conversations', routes.conversation);
