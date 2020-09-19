@@ -1,10 +1,21 @@
 import { Router } from 'express';
+import { sequelize } from '../models';
 
 const router = Router();
 
 router.get('/', async (req, res) => {
   const allMessages = await req.context.models.Message.findAll();
   res.send(allMessages);
+});
+
+router.get('/random', async (req, res) => {
+  const randomMessage = await req.context.models.Message.findOne({
+    where: {
+      is_open: false,
+    },
+    order: sequelize.random()
+  });
+  res.send(randomMessage);
 });
 
 router.get('/:messageId', async (req, res) => {
