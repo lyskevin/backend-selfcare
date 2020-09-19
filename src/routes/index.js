@@ -1,7 +1,6 @@
 import auth from './auth';
 import user from './user';
-import journalPage from './journalPage';
-import journalBlock from './journalBlock';
+import journal from './journal';
 import soundFile from './soundFile';
 import unopenedMessage from './unopenedMessage';
 import message from './message';
@@ -10,8 +9,7 @@ import conversation from './conversation';
 export default {
   auth,
   user,
-  journalPage,
-  journalBlock,
+  journal,
   soundFile,
   unopenedMessage,
   message,

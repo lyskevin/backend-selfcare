@@ -1,19 +1,14 @@
 import { Router } from 'express';
 import passport from 'passport';
+import User from '../models/user';
 
 const router = Router();
 
-router.get('/', async (req, res) => {
-  const { User } = req.context.models;
-  const allUsers = await User.findAll();
-  res.send(allUsers);
-});
-
 router.get(
-  '/protected',
+  '/profile',
   passport.authenticate('jwt', { session: false }),
-  (req, res) => {
-    res.status(200).send('ok');
+  async (req, res) => {
+    res.status(200).send(req.user);
   }
 );
 

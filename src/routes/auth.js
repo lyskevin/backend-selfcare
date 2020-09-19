@@ -5,6 +5,10 @@ import passport from 'passport';
 
 const router = Router();
 
+/**
+ * Normal login
+ */
+
 router.post('/login', async (req, res) => {
   const { User } = req.context.models;
   const { username, password } = req.body;
@@ -29,12 +33,32 @@ router.post('/login', async (req, res) => {
   }
 });
 
+router.post('/register', async (req, res) => {
+  const { User } = req.context.models;
+
+  const { username, password } = req.body;
+
+  try {
+    const hash = await hashPassword(password);
+
+    const user = await User.create({ username, password: hash });
+    const { token, expires } = issueJwt(user);
+    res.status(200).json({ user, token, expires });
+  } catch (e) {
+    console.log(e);
+  }
+});
+
+/**
+ * Social login
+ */
+
 router.get('/facebook', passport.authenticate('facebook'));
 
 router.get(
   '/callback',
   passport.authenticate('facebook', {
-    failureRedirect: '/fail',
+    failureRedirect: '/auth/fail',
     session: false,
   }),
   (req, res) => {
@@ -51,21 +75,5 @@ router.get(
 router.get('/fail', (req, res) =>
   res.status(401).send('Failed to login to Facebook')
 );
-
-router.post('/register', async (req, res) => {
-  const { User } = req.context.models;
-
-  const { username, password } = req.body;
-
-  try {
-    const hash = await hashPassword(password);
-
-    const user = await User.create({ username, password: hash });
-    const { token, expires } = issueJwt(user);
-    res.status(200).json({ user, token, expires });
-  } catch (e) {
-    console.log(e);
-  }
-});
 
 export default router;

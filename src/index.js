@@ -31,10 +31,9 @@ db.sync({ force: eraseDatabaseOnSync })
   .catch((err) => console.log(err));
 
 app.use('/auth', routes.auth);
-app.use('/users', routes.user);
-app.use('/journalPages', routes.journalPage);
-app.use('/journalBlocks', routes.journalBlock);
-app.use('/soundFiles', routes.soundFile);
-app.use('/unopenedMessages', routes.unopenedMessage);
-app.use('/messages', routes.message);
-app.use('/conversations', routes.conversation);
+app.use('/user', routes.user);
+app.use('/journal', routes.journal);
+app.use('/soundFile', routes.soundFile);
+app.use('/unopenedMessage', routes.unopenedMessage);
+app.use('/message', routes.message);
+app.use('/conversation', routes.conversation);

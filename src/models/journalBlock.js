@@ -24,7 +24,10 @@ const JournalBlock = db.define(
 
 JournalBlock.association = (models) => {
   JournalBlock.belongsTo(models.JournalPage, {
-    foreignKey: 'page_id',
+    foreignKey: {
+      name: 'page_id',
+      unique: true,
+    },
   });
 };
 
