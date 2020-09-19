@@ -1,20 +1,21 @@
 import { Router } from 'express';
 import { Op } from 'sequelize';
+import Conversation from '../models/conversation';
 
 const router = Router();
 
 router.get('/', async (req, res) => {
-  const allConversations = await req.context.models.Conversation.findAll();
+  const allConversations = await Conversation.findAll();
   res.send(allConversations);
 });
 
 router.get('/:conversationId', async (req, res) => {
-  const conversation = await req.context.models.Conversation.findByPk(req.params.conversationId);
+  const conversation = await Conversation.findByPk(req.params.conversationId);
   res.send(conversation);
 });
 
 router.get('/userId/:userId', async (req, res) => {
-  const allUserConversations = await req.context.models.Conversation.findAll({
+  const allUserConversations = await Conversation.findAll({
     where: {
       [Op.or]: [
         {
@@ -34,7 +35,7 @@ router.get('/userId/:userId', async (req, res) => {
 })
 
 router.post('/', async (req, res) => {
-  const conversation = await req.context.models.Conversation.create({
+  const conversation = await Conversation.create({
     open: req.query.open,
     first_user_id: req.query.firstUserId,
     second_user_id: req.query.secondUserId,
@@ -43,7 +44,7 @@ router.post('/', async (req, res) => {
 });
 
 router.delete('/:conversationId', async (req, res) => {
-  await req.context.models.Conversation.destroy({
+  await Conversation.destroy({
     where: {
       id: req.params.conversationId,
     }
