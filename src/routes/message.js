@@ -1,15 +1,16 @@
 import { Router } from 'express';
 import { sequelize } from '../models';
+import Message from '../models/message';
 
 const router = Router();
 
 router.get('/', async (req, res) => {
-  const allMessages = await req.context.models.Message.findAll();
+  const allMessages = await Message.findAll();
   res.send(allMessages);
 });
 
 router.get('/randomUnopened', async (req, res) => {
-  const randomMessage = await req.context.models.Message.findOne({
+  const randomMessage = await Message.findOne({
     where: {
       is_open: false,
     },
@@ -19,12 +20,12 @@ router.get('/randomUnopened', async (req, res) => {
 });
 
 router.get('/:messageId', async (req, res) => {
-  const message = await req.context.models.Message.findByPk(req.params.messageId);
+  const message = await Message.findByPk(req.params.messageId);
   res.send(message);
 });
 
 router.get('/conversationId/:conversationId', async (req, res) => {
-  const message = await req.context.models.Message.findAll({
+  const message = await Message.findAll({
     where: {
       conversation_id: req.params.conversationId,
     },
@@ -36,7 +37,7 @@ router.get('/conversationId/:conversationId', async (req, res) => {
 });
 
 router.post('/', async (req, res) => {
-  const message = await req.context.models.Message.create({
+  const message = await Message.create({
     is_open: false,
     user_id: req.query.userId,
     url: req.query.url,
@@ -45,7 +46,7 @@ router.post('/', async (req, res) => {
 });
 
 router.post('/conversationId', async (req, res) => {
-  const message = await req.context.models.Message.create({
+  const message = await Message.create({
     is_open: false,
     user_id: req.query.userId,
     url: req.query.url,
@@ -55,7 +56,7 @@ router.post('/conversationId', async (req, res) => {
 });
 
 router.put('/:messageId', async (req, res) => {
-  var message = await req.context.models.Message.findByPk(req.params.messageId);
+  var message = await Message.findByPk(req.params.messageId);
   if (message) {
     message = await req.context.models.Message.upsert({
       id: req.params.messageId,
@@ -69,7 +70,7 @@ router.put('/:messageId', async (req, res) => {
 })
 
 router.delete('/:messageId', async (req, res) => {
-  await req.context.models.Message.destroy({
+  await Message.destroy({
     where: {
       id: req.params.messageId,
     }
