@@ -58,7 +58,7 @@ router.post('/conversationId', async (req, res) => {
 router.put('/:messageId', async (req, res) => {
   var message = await Message.findByPk(req.params.messageId);
   if (message) {
-    message = await req.context.models.Message.upsert({
+    message = await Message.upsert({
       id: req.params.messageId,
       is_open: true,
       conversation_id: req.query.conversationId,
