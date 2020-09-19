@@ -2,6 +2,7 @@ import { Router } from 'express';
 import bcrypt from 'bcrypt';
 import { issueJwt, hashPassword } from '../lib/utils';
 import passport from 'passport';
+import User from '../models/user';
 
 const router = Router();
 
@@ -10,7 +11,6 @@ const router = Router();
  */
 
 router.post('/login', async (req, res) => {
-  const { User } = req.context.models;
   const { username, password } = req.body;
 
   try {
@@ -20,7 +20,7 @@ router.post('/login', async (req, res) => {
       res.status(401).send('User not found');
     }
 
-    const isValid = await bcrypt.compare(password, User.password);
+    const isValid = await bcrypt.compare(password, user.password);
 
     if (isValid) {
       const { token, expiresIn } = issueJwt(user);
@@ -34,8 +34,6 @@ router.post('/login', async (req, res) => {
 });
 
 router.post('/register', async (req, res) => {
-  const { User } = req.context.models;
-
   const { username, password } = req.body;
 
   try {
