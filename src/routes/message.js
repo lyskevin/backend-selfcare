@@ -44,6 +44,16 @@ router.post('/', async (req, res) => {
   res.send(message);
 });
 
+router.post('/conversationId', async (req, res) => {
+  const message = await req.context.models.Message.create({
+    is_open: false,
+    user_id: req.query.userId,
+    url: req.query.url,
+    conversation_id: req.query.conversationId,
+  });
+  res.send(message);
+});
+
 router.put('/:messageId', async (req, res) => {
   var message = await req.context.models.Message.findByPk(req.params.messageId);
   if (message) {
