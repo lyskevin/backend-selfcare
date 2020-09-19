@@ -37,7 +37,7 @@ const seedData = async () => {
   const conversation = await Conversation.create();
   await conversation.setFirstUser(alice);
   await conversation.setSecondUser(bob);
-  
+
   await Message.create({
     is_open: false,
     url: 'test.com',
@@ -53,22 +53,22 @@ const seedData = async () => {
   const journalPage1 = await JournalPage.create({
     weather: 'sunny',
     location: 'SG',
-    journal_id: journal1.id,
   });
-  // journalPage1.setJournal(journal1);
+  journalPage1.setJournal(journal1);
 
   const journalPage2 = await JournalPage.create({
     weather: 'cloudy',
     location: 'SG',
     journal_id: journal2.id,
   });
+  journalPage1.setJournal(journal2);
 
   const journalBlock1 = await JournalBlock.create({
     prompt: prompts[0],
     content: 'Mi familia',
     mood: 'HAPPY',
-    page_id: journalPage1.id,
   });
+  journalBlock1.setJournalPage(journalPage1);
 
   const journalBlock2 = await JournalBlock.create({
     prompt: prompts[0],
@@ -76,6 +76,7 @@ const seedData = async () => {
     mood: 'SAD',
     page_id: journalPage2.id,
   });
+  journalBlock2.setJournalPage(journalPage2);
 };
 
 export { seedData };
