@@ -4,12 +4,14 @@ import express from 'express';
 import { sequelize, seedData } from './models';
 import { context } from './middleware';
 import routes from './routes';
+import fileUpload from 'express-fileupload';
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(context);
+app.use(fileUpload());
 
 const eraseDatabaseOnSync = true;
 
@@ -25,6 +27,5 @@ sequelize
   .catch((err) => console.log(err));
 
 app.use('/users', routes.user);
-app.use('/soundFiles', routes.soundFile);
 app.use('/messages', routes.message);
 app.use('/conversations', routes.conversation);
