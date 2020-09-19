@@ -63,10 +63,6 @@ router.get(
   }),
   (req, res) => {
     const { user } = req;
-
-    console.log(user);
-    console.log(user.id);
-    console.log(user.fbId);
     const { token, expires } = issueJwt(user);
     res.status(200).json({ user, token, expires });
   }

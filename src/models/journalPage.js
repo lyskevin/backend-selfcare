@@ -22,13 +22,10 @@ const JournalPage = db.define(
   },
   {
     timestamps: false,
-    // timestamps: true,
-    // createdAt: 'created_at',
-    // updatedAt: 'modified_at',
   }
 );
 
-JournalPage.association = (models) => {
+JournalPage.associate = (models) => {
   JournalPage.belongsTo(models.Journal, {
     as: 'journal',
     foreignKey: 'journal_id',

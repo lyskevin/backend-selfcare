@@ -19,15 +19,20 @@ const JournalBlock = db.define(
       type: DataTypes.ENUM(['HAPPY', 'SAD', 'ANGRY', 'CONFUSED', 'OK']),
     },
   },
-  { timestamps: false }
+  {
+    timestamps: false,
+    indexes: [
+      {
+        unique: true,
+        fields: ['page_id', 'prompt'],
+      },
+    ],
+  }
 );
 
-JournalBlock.association = (models) => {
+JournalBlock.associate = (models) => {
   JournalBlock.belongsTo(models.JournalPage, {
-    foreignKey: {
-      name: 'page_id',
-      unique: true,
-    },
+    foreignKey: 'page_id',
   });
 };
 

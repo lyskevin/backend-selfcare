@@ -11,7 +11,8 @@ router.get(
   async (req, res) => {
     const { date } = req.query;
     const page = await JournalPage.findOne({ where: { date } });
-    res.send(page);
+    const blocks = await JournalBlock.findAll({ where: { page_id: page.id } });
+    res.send({ ...page, blocks });
   }
 );
 
