@@ -1,3 +1,4 @@
+import { text } from 'express';
 import Sequelize from 'sequelize';
 
 const sequelize = new Sequelize(process.env.DATABASE_URL);
@@ -11,7 +12,6 @@ const models = {
   User: importModel('./user'),
   Journal: importModel('./journal'),
   JournalPage: importModel('./journalPage'),
-  SoundFile: importModel('./soundFile'),
   Message: importModel('./message'),
   Conversation: importModel('./conversation')
 };
@@ -33,20 +33,15 @@ const seedData = async () => {
     alias: 'bob',
   });
 
-  const soundFile = await models.SoundFile.create({
-    url: 'test.com',
-  });
-
   const conversation = await models.Conversation.create();
   await conversation.setFirstUser(alice);
   await conversation.setSecondUser(bob);
   
   await models.Message.create({
     is_open: false,
+    url: 'test.com',
   }).then((result) => {
-    result.setSoundFile(soundFile);
     result.setUser(alice);
-    result.setConversation(conversation);
   });
 };
 
