@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { sequelize } from '../models';
 import bcrypt from 'bcrypt';
-import issueJwt from '../lib/utils';
+import { issueJwt } from '../lib/utils';
 import passport from 'passport';
 import User from '../models/user';
 
