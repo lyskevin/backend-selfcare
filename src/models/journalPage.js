@@ -9,22 +9,22 @@ const JournalPage = db.define(
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
     },
-    mood: {
-      type: DataTypes.ENUM({
-        values: ['HAPPY', 'SAD', 'ANGRY', 'CONFUSED', 'OK'],
-      }),
-    },
     weather: {
       type: DataTypes.TEXT,
     },
     location: {
       type: DataTypes.TEXT,
     },
+    date: {
+      type: DataTypes.DATEONLY,
+      defaultValue: new Date(),
+    },
   },
   {
-    timestamps: true,
-    createdAt: 'created_at',
-    updatedAt: 'modified_at',
+    timestamps: false,
+    // timestamps: true,
+    // createdAt: 'created_at',
+    // updatedAt: 'modified_at',
   }
 );
 

@@ -15,8 +15,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(context);
 
 // Passport authorization
-app.use(passport.initialize());
 passportConfig(passport);
+app.use(passport.initialize());
 
 const eraseDatabaseOnSync = true;
 
@@ -30,8 +30,8 @@ db.sync({ force: eraseDatabaseOnSync })
   })
   .catch((err) => console.log(err));
 
-app.use('/users', routes.user);
-app.use('/journalPages', routes.journalPage);
-app.use('/journalBlocks', routes.journalBlock);
-app.use('/messages', routes.message);
-app.use('/conversations', routes.conversation);
+app.use('/auth', routes.auth);
+app.use('/user', routes.user);
+app.use('/journal', routes.journal);
+app.use('/message', routes.message);
+app.use('/conversation', routes.conversation);

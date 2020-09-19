@@ -3,32 +3,31 @@ import { sequelize } from '../models';
 import bcrypt from 'bcrypt';
 import issueJwt from '../lib/utils';
 import passport from 'passport';
+import User from '../models/user';
 
 const router = Router();
 
 router.get('/', async (req, res) => {
-  const { User } = req.context.models;
   const allUsers = await User.findAll();
   res.send(allUsers);
 });
 
 router.get('/random', async (req, res) => {
-  const randomUser = await req.context.models.User.findOne({
+  const randomUser = await User.findOne({
     order: sequelize.random(),
   });
   res.send(randomUser);
 });
 
 router.get(
-  '/protected',
+  '/profile',
   passport.authenticate('jwt', { session: false }),
-  (req, res) => {
-    res.status(200).json({ success: true, msg: 'Authorized!' });
+  async (req, res) => {
+    res.status(200).send(req.user);
   }
 );
 
 router.post('/login', async (req, res) => {
-  const { User } = req.context.models;
   const { username, password } = req.body;
 
   try {
@@ -52,8 +51,6 @@ router.post('/login', async (req, res) => {
 });
 
 router.post('/register', async (req, res) => {
-  const { User } = req.context.models;
-
   const { username, password } = req.body;
 
   try {
@@ -69,7 +66,7 @@ router.post('/register', async (req, res) => {
 });
 
 router.get('/:userId', async (req, res) => {
-  const user = await req.context.models.User.findAll({
+  const user = await User.findAll({
     where: {
       id: req.params.userId,
     },
