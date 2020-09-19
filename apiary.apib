@@ -52,12 +52,14 @@ through daily journaling and spontaneous messages with others.
 
 # Group Journal
 
-## Journal Page [/journal/page{?createdAt}]
+## Journal Page [/journal/page{?date}]
 
 ### GET [GET]
 
 + Parameters
-    + createdAt (string)
+    + date: `2020-09-19` (string)
+    
+        Date of the journal page entry, in YYYY-MM-DD format.
 
 + Request (application/json)
     + Headers
@@ -68,27 +70,23 @@ through daily journaling and spontaneous messages with others.
 
     + Attributes (JournalPage)
 
-## Journal Block [/journal/block{?prompt,content,mood}]
+## Journal Block [/journal/block]
 
 ### POST [POST]
-
-+ Parameters
-    - prompt (string)
-    - content (string)
-    - mood (Mood)
 
 + Request (application/json)
     + Headers
 
             Authentication: Bearer JWT
 
-+ Response 200 (application/json)
+    + Attributes (JournalBlock)
 
++ Response 200 (application/json)
 
 
 # Group Conversation
 
-## Get list of users in conversations with user [/conversation]
+## Get list of all conversations that user has [/conversation]
 
 ### GET [GET]
 
@@ -100,6 +98,19 @@ through daily journaling and spontaneous messages with others.
 + Response 200 (application/json)
 
     + Attributes (array[Conversation])
+
+## Get the conversation with the specified ID [/conversation/{conversationId}]
+
+### GET [GET]
+
++ Request (application/json)
+    + Headers
+
+            Authentication: Bearer JWT
+
++ Response 200 (application/json)
+
+    + Attributes (Conversation)
 
 ## Get messages in conversation with another user [/conversation/{userId}]
 
@@ -147,7 +158,21 @@ through daily journaling and spontaneous messages with others.
 
 + Response 200 (application/json)
 
-# Group Blocked Users
+# Group User
+
+## Get user profile [/user/profile]
+
+### GET [GET]
+
++ Request (application/json)
+    + Headers
+
+            Authentication: Bearer JWT
+
++ Response 200 (application/json)
+
+    + Attributes (User)
+
 
 ## Get list of users blocked by a user [/user/blocked]
 
@@ -198,6 +223,7 @@ through daily journaling and spontaneous messages with others.
 - createdAt (string)
 
 ## Conversation (object)
+- id (Id)
 - userId (Id)
 - alias: simple-cat (string)
 
