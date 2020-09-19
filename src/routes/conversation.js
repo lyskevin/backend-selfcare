@@ -31,12 +31,11 @@ router.get('/withUser/:userId', async (req, res) => {
       ]
     }
   });
-  return res.send(allUserConversations);
+  return res.send(allUserConversations)
 })
 
 router.post('/', async (req, res) => {
   const conversation = await Conversation.create({
-    open: req.query.open,
     first_user_id: req.query.firstUserId,
     second_user_id: req.query.secondUserId,
   });
