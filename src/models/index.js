@@ -1,4 +1,3 @@
-
 import User from './user';
 import Journal from './journal';
 import JournalBlock from './journalBlock';
@@ -77,13 +76,6 @@ const seedData = async () => {
     mood: 'SAD',
     page_id: journalPage2.id,
   });
-
-  // Conversations
-  const conversation = await Conversation.create({
-    open: true,
-  });
-  await conversation.setFirstUser(alice);
-  await conversation.setSecondUser(bob);
 };
 
 export { seedData };
