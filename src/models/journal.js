@@ -17,7 +17,10 @@ const Journal = db.define(
 );
 
 Journal.associate = (models) => {
-  Journal.hasMany(models.JournalPage, { onDelete: 'CASCADE' });
+  Journal.hasMany(models.JournalPage, {
+    foreignKey: 'journal_id',
+    onDelete: 'CASCADE',
+  });
 };
 
 export default Journal;

@@ -15,9 +15,6 @@ const JournalBlock = db.define(
     content: {
       type: DataTypes.TEXT,
     },
-    mood: {
-      type: DataTypes.ENUM(['HAPPY', 'SAD', 'ANGRY', 'CONFUSED', 'OK']),
-    },
   },
   {
     timestamps: false,

@@ -19,6 +19,9 @@ const JournalPage = db.define(
       type: DataTypes.DATEONLY,
       defaultValue: new Date(),
     },
+    mood: {
+      type: DataTypes.STRING,
+    },
   },
   {
     timestamps: false,
@@ -27,10 +30,12 @@ const JournalPage = db.define(
 
 JournalPage.associate = (models) => {
   JournalPage.belongsTo(models.Journal, {
-    as: 'journal',
     foreignKey: 'journal_id',
   });
-  JournalPage.hasMany(models.JournalBlock, { onDelete: 'CASCADE' });
+  JournalPage.hasMany(models.JournalBlock, {
+    foreignKey: 'page_id',
+    onDelete: 'CASCADE',
+  });
 };
 
 export default JournalPage;

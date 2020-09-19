@@ -59,7 +59,6 @@ const seedData = async () => {
   const journalPage2 = await JournalPage.create({
     weather: 'cloudy',
     location: 'SG',
-    journal_id: journal2.id,
   });
   journalPage1.setJournal(journal2);
 
@@ -74,7 +73,6 @@ const seedData = async () => {
     prompt: prompts[0],
     content: 'Nothing',
     mood: 'SAD',
-    page_id: journalPage2.id,
   });
   journalBlock2.setJournalPage(journalPage2);
 };
