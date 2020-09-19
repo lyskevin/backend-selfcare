@@ -1,0 +1,234 @@
+FORMAT: 1A
+HOST: https://polls.apiblueprint.org/
+
+# halcyon
+
+Halcyon is a self-care application for putting your mind and soul at ease
+through daily journaling and spontaneous messages with others.
+
+
+# Group Authorization
+
+## Register [/auth/register]
+
+### Register with credentials [POST]
+
++ Request (application/json)
+
+    + Attributes (AuthRequest)
+
++ Response 200 (application/json)
+
+    + Attributes (AuthResponse)
+
+## Login [/auth/login]
+
+### Login with credentials [POST]
+
++ Request (application/json)
+
+    + Attributes (AuthRequest)
+
++ Response 200 (application/json)
+
+    + Attributes (AuthResponse)
+
++ Response 401
+
+        "Wrong password"
+
+## Facebook [/auth/facebook]
+
+### Login with facebook [GET]
+
++ Response 200 (application/json)
+
+    + Attributes (AuthResponse)
+
++ Response 401
+
+        "Failed to login to Facebook"
+    
+
+# Group Journal
+
+## Journal Page [/journal/page{?createdAt}]
+
+### GET [GET]
+
++ Parameters
+    + createdAt (string)
+
++ Request (application/json)
+    + Headers
+
+            Authentication: Bearer JWT
+
++ Response 200 (application/json)
+
+    + Attributes (JournalPage)
+
+## Journal Block [/journal/block{?prompt,content,mood}]
+
+### POST [POST]
+
++ Parameters
+    - prompt (string)
+    - content (string)
+    - mood (Mood)
+
++ Request (application/json)
+    + Headers
+
+            Authentication: Bearer JWT
+
++ Response 200 (application/json)
+
+
+
+# Group Conversation
+
+## Get list of users in conversations with user [/conversation]
+
+### GET [GET]
+
++ Request (application/json)
+    + Headers
+
+            Authentication: Bearer JWT
+
++ Response 200 (application/json)
+
+    + Attributes (array[Conversation])
+
+## Get messages in conversation with another user [/conversation/{userId}]
+
+### GET [GET]
+
++ Parameters
+    - userId (Id)
+
++ Request (application/json)
+    + Headers
+
+            Authentication: Bearer JWT
+
++ Response 200 (application/json)
+
+    + Attributes (array[Message])
+
+## Send message to random user [/message/random]
+
++ Request (application/json)
+    + Headers
+
+            Authentication: Bearer JWT
+    
+    + Attributes
+        + fileUrl (string)
+
++ Response 200 (application/json)
+
+## Send message to user in conversation [/message/{conversationId}]
+
+### POST [POST]
+
++ Parameters
+    - conversationId (Id)
+
++ Request (application/json)
+    + Headers
+
+            Authentication: Bearer JWT
+            
+    + Attributes
+        + fileUrl (string)
+        
+
++ Response 200 (application/json)
+
+# Group Blocked Users
+
+## Get list of users blocked by a user [/user/blocked]
+
+### GET [GET]
+
++ Request (application/json)
+    + Headers
+
+            Authentication: Bearer JWT
+
++ Response 200 (application/json)
+
+    + Attributes (array[BlockedUser])
+
+## Block a user [/user/block{?id}]
+
+### POST [POST]
+
++ Parameters
+    - id (Id) - id of user to block
+
++ Request (application/json)
+    + Headers
+
+            Authentication: Bearer JWT
+        
+
++ Response 200 (application/json)
+
+
+# Data Structures
+
+## AuthRequest (object)
+- username: exampleUser123 (string)
+- password: password123 (string)
+
+## AuthResponse (User)
+- token (Token)
+
+## JournalBlock (object)
+- prompt (string)
+- content (string)
+- mood (Mood)
+
+## JournalPage (object)
+- weather (string)
+- location (string)
+- createdAt (string)
+
+## Conversation (object)
+- userId (Id)
+- alias: simple-cat (string)
+
+## Message (object)
+- id (Id)
+- conversationId (Id)
+- fileUrl (string)
+- createdAt (string)
+- opened (boolean)
+
+## Mood (enum)
+- HAPPY
+- SAD
+- ANGRY
+- CONFUSED
+- OK
+
+## BlockedUser (object)
+- id (Id)
+- name: john (string)
+- username: johnny (string)
+
+## User (object)
+- id (Id)
+- fbId: 1234567890873169 (string)
+- name: john (string)
+- alias: simple-cat (string)
+- username: johnny (string)
+
+## Id (string)
+`13ed88c3-a7c3-4aef-a688-8705895cca47`
+
+## Token (string)
+`aaAbbCciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2MDA0MTMwODAxNjMsImV4cCI6MTYwMDQxMzE2NjU2M30.3zapZc7hXakM3xFZlkunOXH5BOYmMpZkGZVPtz-Sm8M`

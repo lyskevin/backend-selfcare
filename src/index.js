@@ -1,10 +1,12 @@
 import 'dotenv/config';
 import cors from 'cors';
 import express from 'express';
-import { sequelize, seedData } from './models';
+import db from './config/database';
+import { seedData } from './models';
 import { context } from './middleware';
 import routes from './routes';
-import fileUpload from 'express-fileupload';
+import passportConfig from './config/passport';
+import passport from 'passport';
 
 const app = express();
 app.use(cors());
@@ -13,10 +15,13 @@ app.use(express.urlencoded({ extended: true }));
 app.use(context);
 app.use(fileUpload());
 
+// Passport authorization
+app.use(passport.initialize());
+passportConfig(passport);
+
 const eraseDatabaseOnSync = true;
 
-sequelize
-  .sync({ force: eraseDatabaseOnSync })
+db.sync({ force: eraseDatabaseOnSync })
   .then(() => {
     seedData();
 
@@ -27,5 +32,7 @@ sequelize
   .catch((err) => console.log(err));
 
 app.use('/users', routes.user);
+app.use('/journalPages', routes.journalPage);
+app.use('/journalBlocks', routes.journalBlock);
 app.use('/messages', routes.message);
 app.use('/conversations', routes.conversation);
