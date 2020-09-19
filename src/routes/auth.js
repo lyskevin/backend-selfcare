@@ -47,6 +47,16 @@ router.post('/register', async (req, res) => {
   }
 });
 
+router.post('/guest', async (req, res) => {
+  try {
+    const user = await User.create();
+    const { token, expires } = issueJwt(user);
+    res.status(200).json({ user, token, expires });
+  } catch (e) {
+    console.log(e);
+  }
+});
+
 /**
  * Social login
  */
