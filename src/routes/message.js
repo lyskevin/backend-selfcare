@@ -24,7 +24,7 @@ router.get('/:messageId', async (req, res) => {
   res.send(message);
 });
 
-router.get('/conversationId/:conversationId', async (req, res) => {
+router.get('/withConversation/:conversationId', async (req, res) => {
   const message = await Message.findAll({
     where: {
       conversation_id: req.params.conversationId,
@@ -45,7 +45,7 @@ router.post('/', async (req, res) => {
   res.send(message);
 });
 
-router.post('/conversationId', async (req, res) => {
+router.post('/withConversation', async (req, res) => {
   const message = await Message.create({
     is_open: false,
     user_id: req.query.userId,
