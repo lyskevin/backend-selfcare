@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { sequelize } from '../models';
 import bcrypt from 'bcrypt';
-import issueJwt from '../lib/utils';
+import { issueJwt } from '../lib/utils';
 import passport from 'passport';
 import User from '../models/user';
 
@@ -37,7 +37,7 @@ router.post('/login', async (req, res) => {
       res.status(401).json({ success: false });
     }
 
-    const isValid = await bcrypt.compare(password, User.password);
+    const isValid = await bcrypt.compare(password, user.password);
 
     if (isValid) {
       const { token, expiresIn } = issueJwt(user);

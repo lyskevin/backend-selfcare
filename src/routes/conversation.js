@@ -1,54 +1,67 @@
 import { Router } from 'express';
 import { Op } from 'sequelize';
 import Conversation from '../models/conversation';
+import passport from 'passport';
 
 const router = Router();
 
-router.get('/', async (req, res) => {
-  const allConversations = await Conversation.findAll();
-  res.send(allConversations);
-});
-
-router.get('/:conversationId', async (req, res) => {
-  const conversation = await Conversation.findByPk(req.params.conversationId);
-  res.send(conversation);
-});
-
-router.get('/withUser/:userId', async (req, res) => {
-  const allUserConversations = await Conversation.findAll({
-    where: {
-      [Op.or]: [
-        {
-          first_user_id: {
-            [Op.eq]: req.params.userId
+router.get(
+  '/withUser',
+  passport.authenticate('jwt', { session: false }),
+  async (req, res) => {
+    const allUserConversations = await Conversation.findAll({
+      where: {
+        [Op.or]: [
+          {
+            first_user_id: {
+              [Op.eq]: req.user
+            }
+          },
+          {
+            second_user_id: {
+              [Op.eq]: req.user
+            }
           }
-        },
-        {
-          second_user_id: {
-            [Op.eq]: req.params.userId
-          }
-        }
-      ]
-    }
-  });
-  return res.send(allUserConversations)
-})
+        ]
+      }
+    });
+    res.send(allUserConversations)
+  }
+);
 
-router.post('/', async (req, res) => {
-  const conversation = await Conversation.create({
-    first_user_id: req.query.firstUserId,
-    second_user_id: req.query.secondUserId,
-  });
-  res.send(conversation);
-});
+router.get(
+  '/:conversationId',
+  passport.authenticate('jwt', { session: false }),
+  async (req, res) => {
+    const conversation = await Conversation.findByPk(req.params.conversationId);
+    res.send(conversation);
+  }
+);
 
-router.delete('/:conversationId', async (req, res) => {
-  await Conversation.destroy({
-    where: {
-      id: req.params.conversationId,
-    }
-  });
-  res.sendStatus(200);
-});
+router.post(
+  '/',
+  passport.authenticate('jwt', { session: false }),
+  async (req, res) => {
+    const { firstUserId, secondUserId } = req.body;
+    const conversation = await Conversation.create({
+      first_user_id: firstUserId,
+      second_user_id: secondUserId,
+    });
+    res.send(conversation);
+  }
+);
+
+router.delete(
+  '/:conversationId',
+  passport.authenticate('jwt', { session: false }),
+  async (req, res) => {
+    await Conversation.destroy({
+      where: {
+        id: req.params.conversationId,
+      }
+    });
+    res.sendStatus(200);
+  }
+);
 
 export default router;
