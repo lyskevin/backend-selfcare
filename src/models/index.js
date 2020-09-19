@@ -3,9 +3,7 @@ import Journal from './journal';
 import JournalBlock from './journalBlock';
 import JournalPage from './journalPage';
 import Message from './message';
-import UnopenedMessage from './unopenedMessage';
 import Conversation from './conversation';
-import SoundFile from './soundFile';
 
 const { prompts } = require('./prompts/prompts.json');
 
@@ -15,9 +13,7 @@ const models = {
   JournalBlock,
   JournalPage,
   Message,
-  UnopenedMessage,
   Conversation,
-  SoundFile,
 };
 
 Object.keys(models).forEach((key) => {
@@ -36,6 +32,17 @@ const seedData = async () => {
   const bob = await User.create({
     name: 'robert',
     alias: 'bob',
+  });
+
+  const conversation = await Conversation.create();
+  await conversation.setFirstUser(alice);
+  await conversation.setSecondUser(bob);
+  
+  await Message.create({
+    is_open: false,
+    url: 'test.com',
+  }).then((result) => {
+    result.setUser(alice);
   });
 
   // Journal
@@ -68,30 +75,6 @@ const seedData = async () => {
     content: 'Nothing',
     mood: 'SAD',
     page_id: journalPage2.id,
-  });
-
-  // Sound files
-  const soundFile = await SoundFile.create({
-    url: 'test.com',
-  });
-
-  // Unopened messages
-  await UnopenedMessage.create({}).then((result) => {
-    result.setSoundFile(soundFile);
-    result.setUser(alice);
-  });
-
-  // Conversations
-  const conversation = await Conversation.create({
-    open: true,
-  });
-  await conversation.setFirstUser(alice);
-  await conversation.setSecondUser(bob);
-
-  await Message.create({}).then((result) => {
-    result.setSoundFile(soundFile);
-    result.setUser(alice);
-    result.setConversation(conversation);
   });
 };
 

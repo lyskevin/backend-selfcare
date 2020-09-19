@@ -9,9 +9,6 @@ const Conversation = db.define(
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
     },
-    open: {
-      type: DataTypes.BOOLEAN,
-    },
   },
   {
     timestamps: false,

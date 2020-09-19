@@ -33,7 +33,5 @@ db.sync({ force: eraseDatabaseOnSync })
 app.use('/auth', routes.auth);
 app.use('/user', routes.user);
 app.use('/journal', routes.journal);
-app.use('/soundFile', routes.soundFile);
-app.use('/unopenedMessage', routes.unopenedMessage);
 app.use('/message', routes.message);
 app.use('/conversation', routes.conversation);
