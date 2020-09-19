@@ -10,6 +10,9 @@ const message = (sequelize, DataTypes) => {
       is_open: {
         type: DataTypes.BOOLEAN,
       },
+      url: {
+        type: DataTypes.TEXT,
+      }
     },
     {
       timestamps: true,
@@ -20,9 +23,6 @@ const message = (sequelize, DataTypes) => {
   );
 
   Message.associate = (models) => {
-    Message.belongsTo(models.SoundFile, {
-      foreignKey: 'voice_message',
-    });
     Message.belongsTo(models.User, {
       foreignKey: 'user_id',
     });
