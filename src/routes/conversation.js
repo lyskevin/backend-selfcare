@@ -14,7 +14,7 @@ router.get('/:conversationId', async (req, res) => {
   res.send(conversation);
 });
 
-router.get('/userId/:userId', async (req, res) => {
+router.get('/withUserId/:userId', async (req, res) => {
   const allUserConversations = await Conversation.findAll({
     where: {
       [Op.or]: [
