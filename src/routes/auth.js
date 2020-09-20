@@ -20,7 +20,7 @@ const router = Router();
 router.post('/guest', async (req, res) => {
   try {
     const user = await User.create();
-    const { id, fbId, name, alias } = user;
+    const { id, fbId, name, alias, username } = user;
 
     const tokens = generateAccessAndRefreshTokens(user);
     const { refreshToken } = tokens;
