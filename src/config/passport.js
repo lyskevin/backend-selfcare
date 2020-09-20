@@ -6,7 +6,7 @@ const { User } = models;
 
 const options = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-  secretOrKey: process.env.SECRET,
+  secretOrKey: process.env.ACCESS_TOKEN_SECRET,
 };
 
 const jwtStrategy = new JwtStrategy(options, async (payload, done) => {
@@ -21,8 +21,8 @@ const jwtStrategy = new JwtStrategy(options, async (payload, done) => {
 
 const fbStrategy = new FbStrategy(
   {
-    clientID: process.env['FB_ID'],
-    clientSecret: process.env['FB_SECRET'],
+    clientID: process.env.FB_ID,
+    clientSecret: process.env.FB_SECRET,
     callbackURL: '/auth/callback',
   },
   async (accessToken, refreshToken, profile, done) => {

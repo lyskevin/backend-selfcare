@@ -1,3 +1,4 @@
+import RefreshToken from './refreshToken';
 import User from './user';
 import Journal from './journal';
 import JournalBlock from './journalBlock';
@@ -8,6 +9,7 @@ import Conversation from './conversation';
 const { prompts } = require('./prompts/prompts.json');
 
 const models = {
+  RefreshToken,
   User,
   Journal,
   JournalBlock,

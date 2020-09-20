@@ -17,6 +17,7 @@ const User = db.define(
     },
     username: {
       type: DataTypes.STRING,
+      unique: true,
     },
     password: {
       type: DataTypes.STRING,
@@ -32,6 +33,9 @@ const User = db.define(
 );
 
 User.associate = (models) => {
+  User.hasOne(models.RefreshToken, {
+    foreignKey: 'user_id',
+  });
   User.hasOne(models.Message, {
     foreignKey: 'user_id',
   });

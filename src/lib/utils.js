@@ -4,21 +4,39 @@ import bcrypt from 'bcrypt';
 /**
  * @param {*} user - The user object.  We need this to set the JWT `sub` payload property to the user ID
  */
-function issueJwt(user) {
+function issueJwt(user, secret, expiresIn) {
   const { id } = user;
-  const expiresIn = '1d';
 
   const payload = {
     sub: id,
     iat: Date.now(),
   };
 
-  const token = jwt.sign(payload, process.env.SECRET, { expiresIn: expiresIn });
+  if (!expiresIn) return jwt.sign(payload, secret);
 
+  return jwt.sign(payload, secret, { expiresIn });
+}
+
+function generateAccessToken(user) {
+  const expiresIn = '1d';
+  const token = issueJwt(user, process.env.ACCESS_TOKEN_SECRET, expiresIn);
   return {
     token: 'Bearer ' + token,
     expires: expiresIn,
   };
+}
+
+function generateRefreshToken(user) {
+  const token = issueJwt(user, process.env.REFRESH_TOKEN_SECRET);
+  return {
+    token,
+  };
+}
+
+function generateAccessAndRefreshTokens(user) {
+  const accessToken = generateAccessToken(user);
+  const { token: refreshToken } = generateRefreshToken(user);
+  return { accessToken, refreshToken };
 }
 
 async function hashPassword(password) {
@@ -27,4 +45,9 @@ async function hashPassword(password) {
   return hash;
 }
 
-export { issueJwt, hashPassword };
+export {
+  generateAccessToken,
+  generateRefreshToken,
+  generateAccessAndRefreshTokens,
+  hashPassword,
+};
