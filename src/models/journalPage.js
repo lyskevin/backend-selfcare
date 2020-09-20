@@ -18,6 +18,7 @@ const JournalPage = db.define(
     date: {
       type: DataTypes.DATEONLY,
       defaultValue: new Date(),
+      unique: true,
     },
     mood: {
       type: DataTypes.STRING,

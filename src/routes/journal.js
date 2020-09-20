@@ -12,6 +12,7 @@ router.get(
   passport.authenticate('jwt', { session: false }),
   async (req, res) => {
     const { start, end } = req.query;
+    if (!start || !end) return res.status(400).send();
     try {
       const pages = await JournalPage.findAll({
         where: {
@@ -22,6 +23,11 @@ router.get(
         },
         include: JournalBlock, // JOIN
       });
+
+      if (!pages.length)
+        return res
+          .status(404)
+          .send(`No pages between ${start} and ${end} found`);
 
       const pagesFlat = pages.map((page) => {
         const { journalBlocks, weather, location, mood, date, id } = page;
@@ -37,19 +43,19 @@ router.get(
 );
 
 router.get(
-  '/page/date',
+  '/page',
   passport.authenticate('jwt', { session: false }),
   async (req, res) => {
     try {
       const { date } = req.query;
+      if (!date) return res.status(400).send();
+
       const page = await JournalPage.findOne({
         where: { date },
         include: JournalBlock,
       });
 
-      if (!page) {
-        return res.status(200).send(`No page on ${date} found`);
-      }
+      if (!page) return res.status(404).send(`No page on ${date} found`);
 
       const { journalBlocks, weather, location, mood, id } = page;
       const { prompt, content } = journalBlocks[0];
@@ -67,7 +73,10 @@ router.post(
   '/page',
   passport.authenticate('jwt', { session: false }),
   async (req, res) => {
-    const { weather, location, prompt, content, mood, date } = req.body;
+    const { date } = req.query;
+    if (!date) return res.status(400).send();
+
+    const { weather, location, prompt, content, mood } = req.body;
 
     try {
       await db.transaction(async (t) => {

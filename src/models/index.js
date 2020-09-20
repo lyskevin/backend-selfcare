@@ -61,6 +61,7 @@ const seedData = async () => {
   const journalPage2 = await JournalPage.create({
     weather: 'cloudy',
     location: 'SG',
+    date: '2020-09-19',
   });
   journalPage1.setJournal(journal2);
 
