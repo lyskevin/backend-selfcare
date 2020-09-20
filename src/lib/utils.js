@@ -9,7 +9,6 @@ function issueJwt(user, secret, expiresIn) {
 
   const payload = {
     sub: id,
-    iat: Date.now(),
   };
 
   if (!expiresIn) return jwt.sign(payload, secret);
