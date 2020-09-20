@@ -36,6 +36,7 @@ User.associate = (models) => {
   User.hasOne(models.RefreshToken, {
     foreignKey: 'user_id',
   });
+  User.hasMany(models.JournalPage, { foreignKey: 'user_id' });
   User.hasOne(models.Message, {
     foreignKey: 'user_id',
   });

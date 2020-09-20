@@ -47,23 +47,19 @@ const seedData = async () => {
     result.setUser(alice);
   });
 
-  // Journal
-  const journal1 = await Journal.create({ id: alice.id });
-  const journal2 = await Journal.create({ id: bob.id });
-
   // JournalPage
   const journalPage1 = await JournalPage.create({
     weather: 'sunny',
     location: 'SG',
   });
-  journalPage1.setJournal(journal1);
+  journalPage1.setUser(alice);
 
   const journalPage2 = await JournalPage.create({
     weather: 'cloudy',
     location: 'SG',
     date: '2020-09-19',
   });
-  journalPage1.setJournal(journal2);
+  journalPage2.setUser(bob);
 
   const journalBlock1 = await JournalBlock.create({
     prompt: prompts[0],

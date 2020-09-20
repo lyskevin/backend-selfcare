@@ -13,6 +13,8 @@ router.get(
   async (req, res) => {
     const { start, end } = req.query;
     if (!start || !end) return res.status(400).send();
+
+    const { user } = req;
     try {
       const pages = await JournalPage.findAll({
         where: {
@@ -20,6 +22,7 @@ router.get(
             [Op.gte]: new Date(start),
             [Op.lte]: new Date(end),
           },
+          user_id: user.id,
         },
         include: JournalBlock, // JOIN
       });
@@ -29,12 +32,12 @@ router.get(
           .status(404)
           .send(`No pages between ${start} and ${end} found`);
 
-      const pagesFlat = pages.map((page) => {
-        const { journalBlocks, weather, location, mood, date, id } = page;
-        const { prompt, content } = journalBlocks[0];
+      const pagesDesc = pages.map((page) => {
+        const { journalBlock, weather, location, mood, date, id } = page;
+        const { prompt, content } = journalBlock;
         return { id, date, weather, location, mood, prompt, content };
       });
-      res.status(200).send(pagesFlat);
+      res.status(200).send(pagesDesc);
     } catch (e) {
       console.log(e);
       res.status(500).send();
@@ -46,19 +49,22 @@ router.get(
   '/page',
   passport.authenticate('jwt', { session: false }),
   async (req, res) => {
-    try {
-      const { date } = req.query;
-      if (!date) return res.status(400).send();
+    const { date } = req.query;
+    if (!date) return res.status(400).send();
 
+    const { user } = req;
+    try {
       const page = await JournalPage.findOne({
-        where: { date },
+        where: {
+          date,
+          user_id: user.id,
+        },
         include: JournalBlock,
       });
-
       if (!page) return res.status(404).send(`No page on ${date} found`);
 
-      const { journalBlocks, weather, location, mood, id } = page;
-      const { prompt, content } = journalBlocks[0];
+      const { journalBlock, weather, location, mood, id } = page;
+      const { prompt, content } = journalBlock;
       res
         .status(200)
         .send({ id, date, weather, location, mood, prompt, content });
@@ -76,12 +82,14 @@ router.post(
     const { date } = req.query;
     if (!date) return res.status(400).send();
 
+    const { user } = req;
     const { weather, location, prompt, content, mood } = req.body;
 
     try {
       await db.transaction(async (t) => {
         const [page, created] = await JournalPage.upsert(
           {
+            user_id: user.id,
             date,
             weather,
             location,
@@ -93,7 +101,7 @@ router.post(
           { prompt, content },
           { transaction: t }
         );
-        await page.addJournalBlock(block, { transaction: t });
+        await page.setJournalBlock(block, { transaction: t });
       });
       res.status(200).send();
     } catch (e) {
