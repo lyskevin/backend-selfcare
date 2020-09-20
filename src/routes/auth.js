@@ -83,7 +83,7 @@ router.post('/guest', async (req, res) => {
   }
 });
 
-router.get('/token', async (req, res) => {
+router.post('/token', async (req, res) => {
   try {
     const { refreshToken } = req.body;
     if (!refreshToken) return res.status(401).send();
