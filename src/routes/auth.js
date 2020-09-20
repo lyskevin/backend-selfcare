@@ -138,10 +138,22 @@ router.get(
     failureRedirect: '/auth/fail',
     session: false,
   }),
-  (req, res) => {
-    const { user } = req;
-    const { token, expires } = generateAccessToken(user);
-    res.status(200).json({ user, token, expires });
+  async (req, res) => {
+    try {
+      const { user } = req;
+      const { id, fbId, name, alias, username } = user;
+
+      const tokens = generateAccessAndRefreshTokens(user);
+      const { refreshToken } = tokens;
+      const tokenObj = await RefreshToken.create({
+        token: refreshToken,
+      });
+      tokenObj.setUser(user);
+      res.json({ id, fbId, name, alias, username, ...tokens });
+    } catch (e) {
+      console.log(e);
+      res.status(500).send();
+    }
   }
 );
 
