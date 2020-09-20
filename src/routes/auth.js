@@ -109,6 +109,19 @@ router.post('/token', async (req, res) => {
   }
 });
 
+router.delete('/logout', async (req, res) => {
+  try {
+    const { refreshToken } = req.body;
+    if (!refreshToken) return res.status(401).send();
+
+    await RefreshToken.destroy({ where: { token: refreshToken } });
+    res.status(204).send();
+  } catch (e) {
+    console.log(e);
+    res.status(500).send();
+  }
+});
+
 /*
  * Social login
  */
