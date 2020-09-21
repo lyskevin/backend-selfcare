@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { Op } from 'sequelize';
 import Conversation from '../models/conversation';
-import passport from 'passport';
+import passport, { use } from 'passport';
 
 const router = Router();
 
@@ -9,17 +9,18 @@ router.get(
   '/withUser',
   passport.authenticate('jwt', { session: false }),
   async (req, res) => {
+    const { user } = req;
     const allUserConversations = await Conversation.findAll({
       where: {
         [Op.or]: [
           {
             first_user_id: {
-              [Op.eq]: req.user
+              [Op.eq]: user.id
             }
           },
           {
             second_user_id: {
-              [Op.eq]: req.user
+              [Op.eq]: user.id
             }
           }
         ]
