@@ -28,7 +28,7 @@ const fbStrategy = new FbStrategy(
   async (accessToken, refreshToken, profile, done) => {
     const [user, created] = await User.findOrCreate({
       where: {
-        fbId: profile.id,
+        fb_id: profile.id,
         name: profile.displayName,
       },
     });

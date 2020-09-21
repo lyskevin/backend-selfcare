@@ -22,8 +22,9 @@ const User = db.define(
     password: {
       type: DataTypes.STRING,
     },
-    fbId: {
+    fb_id: {
       type: DataTypes.STRING,
+      unique: true,
     },
   },
   {

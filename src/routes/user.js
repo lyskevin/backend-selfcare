@@ -1,9 +1,9 @@
 import { Router } from 'express';
 import { sequelize } from '../models';
-import bcrypt from 'bcrypt';
-import { issueJwt } from '../lib/utils';
+import { hashPassword } from '../lib/utils';
 import passport from 'passport';
 import User from '../models/user';
+import Sequelize from 'sequelize';
 
 const router = Router();
 
@@ -22,18 +22,28 @@ router.get('/random', async (req, res) => {
 router.get(
   '/profile',
   passport.authenticate('jwt', { session: false }),
-  async (req, res) => {
-    res.status(200).send(req.user);
+  (req, res) => {
+    const { id, fb_id, name, alias, username } = req.user;
+    res.status(200).send({ id, fb_id, name, alias, username });
   }
 );
 
-router.get('/:userId', async (req, res) => {
-  const user = await User.findAll({
-    where: {
-      id: req.params.userId,
-    },
-  });
-  res.send(user);
-});
+router.post(
+  '/profile',
+  passport.authenticate('jwt', { session: false }),
+  async (req, res) => {
+    const { name, alias } = req.query;
+    const user = req.user;
+    user.name = name || user.name;
+    user.alias = alias || user.alias;
+    try {
+      await user.save();
+      res.status(200).send();
+    } catch (e) {
+      console.log(e);
+      res.status(500).send();
+    }
+  }
+);
 
 export default router;

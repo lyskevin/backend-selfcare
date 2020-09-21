@@ -20,7 +20,7 @@ const router = Router();
 router.post('/guest', async (req, res) => {
   try {
     const user = await User.create();
-    const { id, fbId, name, alias, username } = user;
+    const { id, fb_id, name, alias, username } = user;
 
     const tokens = generateAccessAndRefreshTokens(user);
     const { refreshToken } = tokens;
@@ -29,7 +29,7 @@ router.post('/guest', async (req, res) => {
     });
     tokenObj.setUser(user);
 
-    res.json({ id, fbId, name, alias, username, ...tokens });
+    res.json({ id, fb_id, name, alias, username, ...tokens });
   } catch (e) {
     console.log(e);
     res.status(500).send();
@@ -44,7 +44,7 @@ router.post('/register', async (req, res) => {
     const hash = await hashPassword(password);
 
     const user = await User.create({ username, password: hash });
-    const { id, fbId, name, alias } = user;
+    const { id, fb_id, name, alias } = user;
 
     const tokens = generateAccessAndRefreshTokens(user);
     const { refreshToken } = tokens;
@@ -53,8 +53,9 @@ router.post('/register', async (req, res) => {
     });
     tokenObj.setUser(user);
 
-    res.json({ id, fbId, name, alias, username, ...tokens });
+    res.json({ id, fb_id, name, alias, username, ...tokens });
   } catch (e) {
+    console.log(e);
     if (e instanceof Sequelize.UniqueConstraintError)
       return res.status(409).send('Username already taken');
     res.status(500).send();
@@ -68,7 +69,7 @@ router.post('/login', async (req, res) => {
   try {
     const user = await User.findOne({ where: { username } });
     if (!user) return res.status(401).send('User not found');
-    const { id, fbId, name, alias } = user;
+    const { id, fb_id, name, alias } = user;
 
     const isValid = await bcrypt.compare(password, user.password);
     if (!isValid) return res.status(401).send('Wrong password');
@@ -80,7 +81,7 @@ router.post('/login', async (req, res) => {
     });
     tokenObj.setUser(user);
 
-    res.json({ id, fbId, name, alias, username, ...tokens });
+    res.json({ id, fb_id, name, alias, username, ...tokens });
   } catch (e) {
     console.log(e);
     res.status(500).send();
@@ -126,6 +127,31 @@ router.post('/token', async (req, res) => {
   }
 });
 
+router.post(
+  '/change',
+  passport.authenticate('jwt', { session: false }),
+  async (req, res) => {
+    const { username, password } = req.body;
+    const user = req.user;
+    if (!user.username) {
+      if ((username && !password) || (!username && password))
+        return res.status(400).send();
+    }
+    user.username = username || user.username;
+    user.password =
+      (password && (await hashPassword(password))) || user.password;
+    try {
+      await user.save();
+      res.status(200).send();
+    } catch (e) {
+      console.log(e);
+      if (e instanceof Sequelize.UniqueConstraintError)
+        return res.status(409).send('Username already taken');
+      res.status(500).send();
+    }
+  }
+);
+
 /*
  * Social login
  */
@@ -141,7 +167,7 @@ router.get(
   async (req, res) => {
     try {
       const { user } = req;
-      const { id, fbId, name, alias, username } = user;
+      const { id, fb_id, name, alias, username } = user;
 
       const tokens = generateAccessAndRefreshTokens(user);
       const { refreshToken } = tokens;
@@ -149,7 +175,7 @@ router.get(
         token: refreshToken,
       });
       tokenObj.setUser(user);
-      res.json({ id, fbId, name, alias, username, ...tokens });
+      res.json({ id, fb_id, name, alias, username, ...tokens });
     } catch (e) {
       console.log(e);
       res.status(500).send();
