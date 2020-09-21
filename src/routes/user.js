@@ -1,23 +1,8 @@
 import { Router } from 'express';
-import { sequelize } from '../models';
-import { hashPassword } from '../lib/utils';
 import passport from 'passport';
-import User from '../models/user';
-import Sequelize from 'sequelize';
+import BlockedUser from '../models/blockedUser';
 
 const router = Router();
-
-router.get('/', async (req, res) => {
-  const allUsers = await User.findAll();
-  res.send(allUsers);
-});
-
-router.get('/random', async (req, res) => {
-  const randomUser = await User.findOne({
-    order: sequelize.random(),
-  });
-  res.send(randomUser);
-});
 
 router.get(
   '/profile',
@@ -43,6 +28,38 @@ router.post(
       console.log(e);
       res.status(500).send();
     }
+  }
+);
+
+router.get(
+  '/block',
+  passport.authenticate('jwt', { session: false }),
+  async (req, res) => {
+    const { user } = req;
+    const blockedUsers = await BlockedUser.findAll({
+      where: {
+        user_id: user.id,
+      }
+    });
+    res.send(blockedUsers);
+  }
+);
+
+router.post(
+  '/block',
+  passport.authenticate('jwt', { session: false }),
+  async (req, res) => {
+    const { user } = req;
+    const { id } = req.body;
+    await BlockedUser.create({
+      user_id: user.id,
+      blocked_user_id: id,
+    });
+    await BlockedUser.create({
+      user_id: id,
+      blocked_user_id: user.id,
+    });
+    res.status(200).send("User blocked");
   }
 );
 
