@@ -91,12 +91,17 @@ router.put('/:messageId',
 router.delete('/:messageId',
   passport.authenticate('jwt', { session: false }),
   async (req, res) => {
-    await Message.destroy({
-      where: {
-        id: req.params.messageId,
-      }
-    });
-    res.sendStatus(200);
+    try {
+      await Message.destroy({
+        where: {
+          id: req.params.messageId,
+        }
+      });
+      res.status(200).send("Message deleted");
+    } catch (e) {
+      console.log(e);
+      res.status(500).send("The specified message does not exist");
+    }
   }
 );
 
