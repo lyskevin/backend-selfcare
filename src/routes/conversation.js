@@ -42,9 +42,10 @@ router.post(
   '/',
   passport.authenticate('jwt', { session: false }),
   async (req, res) => {
-    const { firstUserId, secondUserId } = req.body;
+    const { user } = req;
+    const { secondUserId } = req.body;
     const conversation = await Conversation.create({
-      first_user_id: firstUserId,
+      first_user_id: user.id,
       second_user_id: secondUserId,
     });
     res.send(conversation);
