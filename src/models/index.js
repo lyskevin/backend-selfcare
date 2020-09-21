@@ -41,7 +41,6 @@ const seedData = async () => {
   await conversation.setSecondUser(bob);
 
   await Message.create({
-    is_open: false,
     url: 'test.com',
   }).then((result) => {
     result.setUser(alice);

@@ -11,6 +11,7 @@ const Message = db.define(
     },
     is_open: {
       type: DataTypes.BOOLEAN,
+      defaultValue: false,
     },
     url: {
       type: DataTypes.TEXT,

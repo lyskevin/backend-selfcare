@@ -50,7 +50,6 @@ router.post('/',
   async (req, res) => {
     const { userId, url } = req.body;
     const message = await Message.create({
-      is_open: false,
       user_id: userId,
       url: url,
     });
@@ -63,7 +62,6 @@ router.post('/withConversation',
   async (req, res) => {
     const { userId, url, conversationId } = req.body;
     const message = await Message.create({
-      is_open: false,
       user_id: userId,
       url: url,
       conversation_id: conversationId,
