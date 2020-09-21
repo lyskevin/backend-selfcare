@@ -1,6 +1,5 @@
 import RefreshToken from './refreshToken';
 import User from './user';
-import Journal from './journal';
 import JournalBlock from './journalBlock';
 import JournalPage from './journalPage';
 import Message from './message';
@@ -11,7 +10,6 @@ const { prompts } = require('./prompts/prompts.json');
 const models = {
   RefreshToken,
   User,
-  Journal,
   JournalBlock,
   JournalPage,
   Message,
