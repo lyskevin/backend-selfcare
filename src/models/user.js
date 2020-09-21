@@ -1,5 +1,6 @@
 import db from '../config/database';
 import { DataTypes } from 'sequelize';
+import BlockedUser from './blockedUser';
 
 const User = db.define(
   'users',
@@ -52,6 +53,16 @@ User.associate = (models) => {
     foreignKey: {
       name: 'second_user_id',
     },
+  });
+  User.belongsToMany(User, {
+    as: 'blockedUser',
+    foreignKey: 'blocked_user_id',
+    through: BlockedUser,
+  });
+  User.belongsToMany(User, {
+    as: 'user',
+    foreignKey: 'user_id',
+    through: BlockedUser,
   });
 };
 
