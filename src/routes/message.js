@@ -48,9 +48,10 @@ router.get(
 router.post('/',
   passport.authenticate('jwt', { session: false }),
   async (req, res) => {
-    const { userId, url } = req.body;
+    const { user } = req;
+    const { url } = req.body;
     const message = await Message.create({
-      user_id: userId,
+      user_id: user.id,
       url: url,
     });
     res.send(message);
@@ -60,9 +61,10 @@ router.post('/',
 router.post('/withConversation',
   passport.authenticate('jwt', { session: false }),
   async (req, res) => {
-    const { userId, url, conversationId } = req.body;
+    const { user } = req;
+    const { url, conversationId } = req.body;
     const message = await Message.create({
-      user_id: userId,
+      user_id: user.id,
       url: url,
       conversation_id: conversationId,
     });
