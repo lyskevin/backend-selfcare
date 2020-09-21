@@ -55,12 +55,17 @@ router.delete(
   '/:conversationId',
   passport.authenticate('jwt', { session: false }),
   async (req, res) => {
-    await Conversation.destroy({
-      where: {
-        id: req.params.conversationId,
-      }
-    });
-    res.sendStatus(200);
+    try {
+      const result = await Conversation.destroy({
+        where: {
+          id: req.params.conversationId,
+        }
+      });
+      res.status(200).send("Conversation deleted");
+    } catch (e) {
+      console.log(e);
+      res.status(500).send("The specified conversation does not exist");
+    }
   }
 );
 
