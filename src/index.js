@@ -35,3 +35,5 @@ app.use('/user', routes.user);
 app.use('/journal', routes.journal);
 app.use('/message', routes.message);
 app.use('/conversation', routes.conversation);
+
+export default app;
