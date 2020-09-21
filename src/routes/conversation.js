@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { Op } from 'sequelize';
 import Conversation from '../models/conversation';
-import passport, { use } from 'passport';
+import passport from 'passport';
 
 const router = Router();
 
