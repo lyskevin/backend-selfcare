@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import passport from 'passport';
 import BlockedUser from '../models/blockedUser';
+import User from '../models/user';
 
 const router = Router();
 
@@ -60,6 +61,17 @@ router.post(
       blocked_user_id: user.id,
     });
     res.status(200).send("User blocked");
+  }
+);
+
+router.get(
+  '/:userId',
+  passport.authenticate('jwt', { session: false }),
+  async (req, res) => {
+    const user = await User.findByPk(req.params.userId, {
+      attributes:['id', 'name', 'username', 'alias'],
+    });
+    res.send(user);
   }
 );
 
