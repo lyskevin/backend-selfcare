@@ -1,7 +1,9 @@
 import { Router } from 'express';
 import Message from '../models/message';
-import passport from 'passport';
-import Sequelize from 'sequelize';
+import passport, { use } from 'passport';
+import Sequelize, { Op } from 'sequelize';
+import User from '../models/user';
+import BlockedUser from '../models/blockedUser';
 
 const router = Router();
 const sequelize = new Sequelize(process.env.DATABASE_URL);
@@ -10,13 +12,39 @@ router.get(
   '/randomUnopened',
   passport.authenticate('jwt', { session: false }),
   async (req, res) => {
-    const randomMessage = await Message.findOne({
+    const { user } = req;
+    const users = await User.findAll({
+      where: {
+        id: user.id,
+      },
+      include: {
+        model: User,
+        as: 'user',
+        through: {
+          attributes: []
+        }
+      }
+    });
+
+    const blockedUserIds = users[0].user.map(user => user.dataValues.id);
+
+    const randomUnopenedMessage = await Message.findOne({
       where: {
         is_open: false,
+        [Op.and]: [{
+          user_id: {
+            [Op.notIn]: blockedUserIds
+          }
+        }, {
+          user_id: {
+            [Op.ne]: user.id
+          }
+        }]
       },
-      order: sequelize.random()
-    });
-    res.send(randomMessage);
+      order: sequelize.random(),
+    })
+
+    res.send(randomUnopenedMessage);
   }
 );
 
