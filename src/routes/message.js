@@ -92,6 +92,7 @@ router.post('/withConversation',
     const { user } = req;
     const { url, conversationId } = req.body;
     const message = await Message.create({
+      is_open: true,
       user_id: user.id,
       url: url,
       conversation_id: conversationId,
