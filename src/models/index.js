@@ -34,6 +34,11 @@ const seedData = async () => {
     alias: 'bob',
   });
 
+  const charles = await User.create({
+    name: 'james charles',
+    alias: 'charles',
+  })
+
   const conversation = await Conversation.create();
   await conversation.setFirstUser(alice);
   await conversation.setSecondUser(bob);
@@ -42,6 +47,18 @@ const seedData = async () => {
     url: 'test.com',
   }).then((result) => {
     result.setUser(alice);
+  });
+
+  await Message.create({
+    url: 'abcd.com',
+  }).then((result) => {
+    result.setUser(bob);
+  });
+
+  await Message.create({
+    url: 'youtube.com/jamescharles',
+  }).then((result) => {
+    result.setUser(charles);
   });
 
   // JournalPage
