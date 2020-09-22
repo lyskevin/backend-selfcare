@@ -11,7 +11,9 @@ const Conversation = db.define(
     },
   },
   {
-    timestamps: false,
+    timestamps: true,
+    updatedAt: false,
+    paranoid: true,
   }
 );
 
