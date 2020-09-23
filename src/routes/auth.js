@@ -21,7 +21,7 @@ const errorMessage = 'The server encountered an error while trying to process th
 router.post('/guest', async (req, res) => {
   try {
     const user = await User.create();
-    const { id, name, username } = user;
+    const { id, username } = user;
 
     const tokens = generateAccessAndRefreshTokens(user);
     const { refreshToken } = tokens;
@@ -30,7 +30,7 @@ router.post('/guest', async (req, res) => {
     });
     tokenObj.setUser(user);
 
-    res.json({ id, name, username, ...tokens });
+    res.json({ id, username, ...tokens });
   } catch (e) {
     console.log(e);
     res.status(500).send(errorMessage);
@@ -54,7 +54,6 @@ router.post('/register', async (req, res) => {
     });
     tokenObj.setUser(user);
 
-    res.json({ id, name, username, ...tokens });
   } catch (e) {
     console.log(e);
     if (e instanceof Sequelize.UniqueConstraintError)
@@ -82,7 +81,7 @@ router.post('/login', async (req, res) => {
     });
     tokenObj.setUser(user);
 
-    res.json({ id, name, username, ...tokens });
+    res.json({ id, username, ...tokens });
   } catch (e) {
     console.log(e);
     res.status(500).send(errorMessage);
@@ -158,7 +157,7 @@ router.post(
  */
 
 router.post('/facebook', async (req, res) => {
-  const { name, fbId } = req.body;
+  const { fbId } = req.body;
   if (!fbId) return res.status(400).send('Missing fb id');
 
   try {
