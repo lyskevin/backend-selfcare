@@ -1,9 +1,8 @@
 import { Router } from 'express';
 import Message from '../models/message';
-import passport, { use } from 'passport';
+import passport from 'passport';
 import Sequelize, { Op } from 'sequelize';
 import User from '../models/user';
-import BlockedUser from '../models/blockedUser';
 
 const router = Router();
 const sequelize = new Sequelize(process.env.DATABASE_URL);

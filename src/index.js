@@ -22,7 +22,7 @@ const eraseDatabaseOnSync = true;
 
 db.sync({ force: eraseDatabaseOnSync })
   .then(() => {
-    seedData();
+    //seedData();
 
     app.listen(process.env.PORT || 3000, () =>
       console.log(`listening on ${process.env.PORT}`)
@@ -35,3 +35,4 @@ app.use('/user', routes.user);
 app.use('/journal', routes.journal);
 app.use('/message', routes.message);
 app.use('/conversation', routes.conversation);
+app.use('/', routes.index); // Delete for production!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
