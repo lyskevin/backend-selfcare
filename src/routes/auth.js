@@ -54,6 +54,7 @@ router.post('/register', async (req, res) => {
     });
     tokenObj.setUser(user);
 
+    res.json({ id, username, ...tokens });
   } catch (e) {
     console.log(e);
     if (e instanceof Sequelize.UniqueConstraintError)
