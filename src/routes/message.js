@@ -6,6 +6,7 @@ import BlockedUser from '../models/blockedUser';
 
 const router = Router();
 const sequelize = new Sequelize(process.env.DATABASE_URL);
+const errorMessage = 'The server encountered an error while trying to process the request';
 
 router.get(
   '/randomUnopened',
@@ -48,7 +49,7 @@ router.get(
       res.send(randomUnopenedMessage);
     } catch (e) {
       console.log(e);
-      res.status(500).send();
+      res.status(500).send(errorMessage);
     }
   }
 );
@@ -63,7 +64,7 @@ router.get(
       res.send(message);
     } catch (e) {
       console.log(e);
-      res.status(500).send();
+      res.status(500).send(errorMessage);
     }
   }
 );
@@ -82,7 +83,7 @@ router.get(
       res.send(messages);
     } catch (e) {
       console.log(e);
-      res.status(500).send();
+      res.status(500).send(errorMessage);
     }
   }
 );
@@ -102,7 +103,7 @@ router.post(
       res.send(message);
     } catch (e) {
       console.log(e);
-      res.status(500).send();
+      res.status(500).send(errorMessage);
     }
   }
 );
@@ -125,7 +126,7 @@ router.post(
       res.send(message);
     } catch (e) {
       console.log(e);
-      res.status(500).send();
+      res.status(500).send(errorMessage);
     }
   }
 );
@@ -143,10 +144,10 @@ router.put(
       message.is_open = true;
       message.conversation_id = conversationId;
       await message.save();
-      res.status(200).send();
+      res.status(200).send('Message status updated');
     } catch (e) {
       console.log(e);
-      res.status(500).send();
+      res.status(500).send(errorMessage);
     }
   }
 );
