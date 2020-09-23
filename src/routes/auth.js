@@ -20,7 +20,7 @@ const router = Router();
 router.post('/guest', async (req, res) => {
   try {
     const user = await User.create();
-    const { id, fb_id, name, username } = user;
+    const { id, name, username } = user;
 
     const tokens = generateAccessAndRefreshTokens(user);
     const { refreshToken } = tokens;
@@ -29,7 +29,7 @@ router.post('/guest', async (req, res) => {
     });
     tokenObj.setUser(user);
 
-    res.json({ id, fb_id, name, username, ...tokens });
+    res.json({ id, name, username, ...tokens });
   } catch (e) {
     console.log(e);
     res.status(500).send();
@@ -44,7 +44,7 @@ router.post('/register', async (req, res) => {
     const hash = await hashPassword(password);
 
     const user = await User.create({ username, password: hash });
-    const { id, fb_id, name } = user;
+    const { id, name } = user;
 
     const tokens = generateAccessAndRefreshTokens(user);
     const { refreshToken } = tokens;
@@ -53,7 +53,7 @@ router.post('/register', async (req, res) => {
     });
     tokenObj.setUser(user);
 
-    res.json({ id, fb_id, name, username, ...tokens });
+    res.json({ id, name, username, ...tokens });
   } catch (e) {
     console.log(e);
     if (e instanceof Sequelize.UniqueConstraintError)
@@ -69,7 +69,7 @@ router.post('/login', async (req, res) => {
   try {
     const user = await User.findOne({ where: { username } });
     if (!user) return res.status(401).send('User not found');
-    const { id, fb_id, name } = user;
+    const { id, name } = user;
 
     const isValid = await bcrypt.compare(password, user.password);
     if (!isValid) return res.status(401).send('Wrong password');
@@ -81,7 +81,7 @@ router.post('/login', async (req, res) => {
     });
     tokenObj.setUser(user);
 
-    res.json({ id, fb_id, name, username, ...tokens });
+    res.json({ id, name, username, ...tokens });
   } catch (e) {
     console.log(e);
     res.status(500).send();
@@ -156,32 +156,32 @@ router.post(
  * Social login
  */
 
-router.get('/facebook', passport.authenticate('facebook'));
+router.post('/facebook', async (req, res) => {
+  const { name, fbId } = req.body;
+  if (!name || !fbId) return res.status(400).send('Missing name or fb id');
 
-router.get(
-  '/callback',
-  passport.authenticate('facebook', {
-    failureRedirect: '/auth/fail',
-    session: false,
-  }),
-  async (req, res) => {
-    try {
-      const { user } = req;
-      const { id, fb_id, name, username } = user;
+  try {
+    const [user, created] = await User.findOrCreate({
+      where: {
+        fb_id: fbId,
+        name,
+      },
+    });
+    const { id, username } = user;
 
-      const tokens = generateAccessAndRefreshTokens(user);
-      const { refreshToken } = tokens;
-      const tokenObj = await RefreshToken.create({
-        token: refreshToken,
-      });
-      tokenObj.setUser(user);
-      res.json({ id, fb_id, name, username, ...tokens });
-    } catch (e) {
-      console.log(e);
-      res.status(500).send();
-    }
+    const tokens = generateAccessAndRefreshTokens(user);
+    const { refreshToken } = tokens;
+    const tokenObj = await RefreshToken.create({
+      token: refreshToken,
+    });
+    tokenObj.setUser(user);
+
+    res.json({ id, name, username, ...tokens });
+  } catch (e) {
+    console.log(e);
+    res.status(500).send();
   }
-);
+});
 
 router.get('/fail', (req, res) =>
   res.status(401).send('Failed to login to Facebook')
