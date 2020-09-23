@@ -5,6 +5,7 @@ import JournalPage from './journalPage';
 import Message from './message';
 import Conversation from './conversation';
 import { hashPassword } from '../lib/utils';
+import BlockedUser from './blockedUser';
 
 const { prompts } = require('./prompts/prompts.json');
 
@@ -43,6 +44,11 @@ const seedData = async () => {
     password: await hashPassword('123'),
   });
 
+  const blockedUser = await BlockedUser.create({
+    user_id: alice.id,
+    blocked_user_id: charles.id,
+  });
+
   const conversationAb = await Conversation.create();
   await conversationAb.setFirstUser(alice);
   await conversationAb.setSecondUser(bob);
@@ -53,6 +59,7 @@ const seedData = async () => {
 
   await Message.create({
     url: 'test.com',
+    is_open: true,
   }).then((result) => {
     result.setUser(alice);
     result.setConversation(conversationAb);
@@ -60,6 +67,7 @@ const seedData = async () => {
 
   await Message.create({
     url: 'abcd.com',
+    is_open: true,
   }).then((result) => {
     result.setUser(bob);
     result.setConversation(conversationAb);
@@ -67,9 +75,16 @@ const seedData = async () => {
 
   await Message.create({
     url: 'youtube.com/jamescharles',
+    is_open: true,
   }).then((result) => {
     result.setUser(charles);
     result.setConversation(conversationBc);
+  });
+
+  await Message.create({
+    url: 'random unopened',
+  }).then((result) => {
+    result.setUser(charles);
   });
 
   // JournalPage

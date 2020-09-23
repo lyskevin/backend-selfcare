@@ -27,17 +27,12 @@ router.get(
         include: JournalBlock, // JOIN
       });
 
-      if (!pages.length)
-        return res
-          .status(404)
-          .send(`No pages between ${start} and ${end} found`);
-
       const pagesDesc = pages.map((page) => {
         const { journalBlock, weather, location, mood, date, id } = page;
         const { prompt, content } = journalBlock;
         return { id, date, weather, location, mood, prompt, content };
       });
-      res.status(200).send(pagesDesc);
+      res.send(pagesDesc);
     } catch (e) {
       console.log(e);
       res.status(500).send();

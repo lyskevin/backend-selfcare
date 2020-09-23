@@ -4,7 +4,6 @@ import passport, { use } from 'passport';
 import Sequelize, { Op } from 'sequelize';
 import User from '../models/user';
 import BlockedUser from '../models/blockedUser';
-import Conversation from '../models/conversation';
 
 const router = Router();
 const sequelize = new Sequelize(process.env.DATABASE_URL);
@@ -14,41 +13,44 @@ router.get(
   passport.authenticate('jwt', { session: false }),
   async (req, res) => {
     const { user } = req;
-    const users = await User.findAll({
-      where: {
-        id: user.id,
-      },
-      include: {
-        model: User,
-        as: 'user',
-        through: {
-          attributes: [],
+    try {
+      const blockedUsers = await BlockedUser.findAll({
+        where: {
+          user_id: user.id,
         },
-      },
-    });
+        attributes: ['blocked_user_id'],
+      });
+      const blockedUserIds = blockedUsers.map(
+        (record) => record.blocked_user_id
+      );
 
-    const blockedUserIds = users[0].user.map((user) => user.dataValues.id);
-
-    const randomUnopenedMessage = await Message.findOne({
-      where: {
-        is_open: false,
-        [Op.and]: [
-          {
-            user_id: {
-              [Op.notIn]: blockedUserIds,
+      const randomUnopenedMessage = await Message.findOne({
+        where: {
+          is_open: false,
+          [Op.and]: [
+            {
+              user_id: {
+                [Op.notIn]: blockedUserIds,
+              },
             },
-          },
-          {
-            user_id: {
-              [Op.ne]: user.id,
+            {
+              user_id: {
+                [Op.ne]: user.id,
+              },
             },
-          },
-        ],
-      },
-      order: sequelize.random(),
-    });
+          ],
+        },
+        order: sequelize.random(),
+      });
 
-    res.send(randomUnopenedMessage);
+      if (!randomUnopenedMessage)
+        return res.status(404).send('No random unopened messages found');
+
+      res.send(randomUnopenedMessage);
+    } catch (e) {
+      console.log(e);
+      res.status(500).send();
+    }
   }
 );
 
@@ -56,8 +58,14 @@ router.get(
   '/:messageId',
   passport.authenticate('jwt', { session: false }),
   async (req, res) => {
-    const message = await Message.findByPk(req.params.messageId);
-    res.send(message);
+    try {
+      const message = await Message.findByPk(req.params.messageId);
+      if (!message) return res.status(404).send(`No message found`);
+      res.send(message);
+    } catch (e) {
+      console.log(e);
+      res.status(500).send();
+    }
   }
 );
 
@@ -65,13 +73,18 @@ router.get(
   '/withConversation/:conversationId',
   passport.authenticate('jwt', { session: false }),
   async (req, res) => {
-    const message = await Message.findAll({
-      where: {
-        conversation_id: req.params.conversationId,
-      },
-      order: [['createdAt', 'ASC']],
-    });
-    res.send(message);
+    try {
+      const messages = await Message.findAll({
+        where: {
+          conversation_id: req.params.conversationId,
+        },
+        order: [['createdAt', 'ASC']],
+      });
+      res.send(messages);
+    } catch (e) {
+      console.log(e);
+      res.status(500).send();
+    }
   }
 );
 
@@ -81,11 +94,17 @@ router.post(
   async (req, res) => {
     const { user } = req;
     const { url } = req.body;
-    const message = await Message.create({
-      user_id: user.id,
-      url: url,
-    });
-    res.send(message);
+    if (!url) res.status(400).send('Missing url');
+    try {
+      const message = await Message.create({
+        user_id: user.id,
+        url: url,
+      });
+      res.send(message);
+    } catch (e) {
+      console.log(e);
+      res.status(500).send();
+    }
   }
 );
 
@@ -95,13 +114,20 @@ router.post(
   async (req, res) => {
     const { user } = req;
     const { url, conversationId } = req.body;
-    const message = await Message.create({
-      is_open: true,
-      user_id: user.id,
-      url: url,
-      conversation_id: conversationId,
-    });
-    res.send(message);
+    if (!url || !conversationId)
+      return res.status(400).send('Missing url or conversation id');
+    try {
+      const message = await Message.create({
+        is_open: true,
+        user_id: user.id,
+        url: url,
+        conversation_id: conversationId,
+      });
+      res.send(message);
+    } catch (e) {
+      console.log(e);
+      res.status(500).send();
+    }
   }
 );
 
@@ -109,21 +135,20 @@ router.put(
   '/:messageId',
   passport.authenticate('jwt', { session: false }),
   async (req, res) => {
-    var message = await Message.findByPk(req.params.messageId);
-    if (message) {
-      const { conversationId } = req.body;
-      message = await Message.upsert(
-        {
-          id: req.params.messageId,
-          is_open: true,
-          conversation_id: conversationId,
-        },
-        {
-          returning: true,
-        }
-      );
+    const { conversationId } = req.body;
+    if (!conversationId) return res.status(400).send('Missing conversation id');
+
+    try {
+      const message = await Message.findByPk(req.params.messageId);
+      if (!message) return res.status(404).send('Message not found');
+      message.is_open = true;
+      message.conversation_id = conversationId;
+      await message.save();
+      res.status(200).send();
+    } catch (e) {
+      console.log(e);
+      res.status(500).send();
     }
-    res.send(message[0]);
   }
 );
 
