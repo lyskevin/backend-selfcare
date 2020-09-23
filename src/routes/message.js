@@ -165,7 +165,7 @@ router.delete(
       res.status(200).send('Message deleted');
     } catch (e) {
       console.log(e);
-      res.status(500).send('The specified message does not exist');
+      res.status(500).send('The server encountered an error while trying to process the request');
     }
   }
 );
