@@ -4,6 +4,7 @@ import BlockedUser from '../models/blockedUser';
 import User from '../models/user';
 
 const router = Router();
+const errorMessage = 'The server encountered an error while trying to process the request';
 
 router.get(
   '/profile',
@@ -23,10 +24,10 @@ router.post(
     user.name = name || user.name;
     try {
       await user.save();
-      res.status(200).send();
+      res.status(200).send('User created');
     } catch (e) {
       console.log(e);
-      res.status(500).send();
+      res.status(500).send(errorMessage);
     }
   }
 );
@@ -46,7 +47,7 @@ router.get(
       res.send(blockedUsers);
     } catch (e) {
       console.log(e);
-      res.status(500).send();
+      res.status(500).send(errorMessage);
     }
   }
 );
@@ -67,7 +68,7 @@ router.post(
       res.send('User blocked');
     } catch (e) {
       console.log(e);
-      res.status(500).send();
+      res.status(500).send(errorMessage);
     }
   }
 );
@@ -84,7 +85,7 @@ router.get(
       res.send(user);
     } catch (e) {
       console.log(e);
-      res.status(500).send();
+      res.status(500).send(errorMessage);
     }
   }
 );
