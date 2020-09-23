@@ -12,8 +12,13 @@ const index = Router();
 index.post(
   '/reset',
   async (req, res) => {
-    db.sync({ force: true })
-    .catch((err) => console.log(err));
+    try {
+      db.sync({ force: true })
+      .catch((err) => console.log(err));
+      res.send(200);
+    } catch (e) {
+      res.send(500);
+    }
   }
 );
 /* Delete for production!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */

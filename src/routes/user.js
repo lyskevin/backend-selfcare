@@ -19,9 +19,7 @@ router.post(
   '/profile',
   passport.authenticate('jwt', { session: false }),
   async (req, res) => {
-    const { name } = req.query;
     const user = req.user;
-    user.name = name || user.name;
     try {
       await user.save();
       res.status(200).send('User created');
@@ -79,7 +77,7 @@ router.get(
   async (req, res) => {
     try {
       const user = await User.findByPk(req.params.userId, {
-        attributes: ['id', 'name', 'username'],
+        attributes: ['id', 'username'],
       });
       if (!user) return res.status(404).send('No such user found');
       res.send(user);
