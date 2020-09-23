@@ -95,7 +95,7 @@ router.delete('/logout', async (req, res) => {
     if (!refreshToken) return res.status(400).send('refreshToken cannot be empty');
 
     await RefreshToken.destroy({ where: { token: refreshToken } });
-    res.status(204).send('Successfully logged out');
+    res.status(204).send();
   } catch (e) {
     console.log(e);
     res.status(500).send(errorMessage);
