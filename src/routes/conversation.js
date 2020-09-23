@@ -4,6 +4,7 @@ import Conversation from '../models/conversation';
 import passport from 'passport';
 
 const router = Router();
+const errorMessage = 'The server encountered an error while trying to process the request';
 
 router.get(
   '/withUser',
@@ -30,7 +31,7 @@ router.get(
       res.send(allUserConversations);
     } catch (e) {
       console.log(e);
-      res.status(500).send();
+      res.status(500).send(errorMessage);
     }
   }
 );
@@ -47,7 +48,7 @@ router.get(
       res.send(conversation);
     } catch (e) {
       console.log(e);
-      res.status(500).send();
+      res.status(500).send(errorMessage);
     }
   }
 );
@@ -68,7 +69,7 @@ router.post(
       res.send(conversation);
     } catch (e) {
       console.log(e);
-      res.status(500).send();
+      res.status(500).send(errorMessage);
     }
   }
 );
@@ -86,7 +87,7 @@ router.delete(
       res.status(200).send('Conversation deleted');
     } catch (e) {
       console.log(e);
-      res.status(500).send('The specified conversation does not exist');
+      res.status(500).send(errorMessage);
     }
   }
 );
