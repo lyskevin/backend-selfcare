@@ -4,6 +4,7 @@ import passport, { use } from 'passport';
 import Sequelize, { Op } from 'sequelize';
 import User from '../models/user';
 import BlockedUser from '../models/blockedUser';
+import Conversation from '../models/conversation';
 
 const router = Router();
 const sequelize = new Sequelize(process.env.DATABASE_URL);
@@ -21,28 +22,31 @@ router.get(
         model: User,
         as: 'user',
         through: {
-          attributes: []
-        }
-      }
+          attributes: [],
+        },
+      },
     });
 
-    const blockedUserIds = users[0].user.map(user => user.dataValues.id);
+    const blockedUserIds = users[0].user.map((user) => user.dataValues.id);
 
     const randomUnopenedMessage = await Message.findOne({
       where: {
         is_open: false,
-        [Op.and]: [{
-          user_id: {
-            [Op.notIn]: blockedUserIds
-          }
-        }, {
-          user_id: {
-            [Op.ne]: user.id
-          }
-        }]
+        [Op.and]: [
+          {
+            user_id: {
+              [Op.notIn]: blockedUserIds,
+            },
+          },
+          {
+            user_id: {
+              [Op.ne]: user.id,
+            },
+          },
+        ],
       },
       order: sequelize.random(),
-    })
+    });
 
     res.send(randomUnopenedMessage);
   }
@@ -65,15 +69,14 @@ router.get(
       where: {
         conversation_id: req.params.conversationId,
       },
-      order: [
-        ['createdAt', 'ASC'],
-      ]
+      order: [['createdAt', 'ASC']],
     });
     res.send(message);
   }
 );
 
-router.post('/',
+router.post(
+  '/',
   passport.authenticate('jwt', { session: false }),
   async (req, res) => {
     const { user } = req;
@@ -86,7 +89,8 @@ router.post('/',
   }
 );
 
-router.post('/withConversation',
+router.post(
+  '/withConversation',
   passport.authenticate('jwt', { session: false }),
   async (req, res) => {
     const { user } = req;
@@ -101,37 +105,42 @@ router.post('/withConversation',
   }
 );
 
-router.put('/:messageId',
+router.put(
+  '/:messageId',
   passport.authenticate('jwt', { session: false }),
   async (req, res) => {
     var message = await Message.findByPk(req.params.messageId);
     if (message) {
       const { conversationId } = req.body;
-      message = await Message.upsert({
-        id: req.params.messageId,
-        is_open: true,
-        conversation_id: conversationId,
-      }, {
-        returning: true,
-      });
+      message = await Message.upsert(
+        {
+          id: req.params.messageId,
+          is_open: true,
+          conversation_id: conversationId,
+        },
+        {
+          returning: true,
+        }
+      );
     }
     res.send(message[0]);
   }
 );
 
-router.delete('/:messageId',
+router.delete(
+  '/:messageId',
   passport.authenticate('jwt', { session: false }),
   async (req, res) => {
     try {
       await Message.destroy({
         where: {
           id: req.params.messageId,
-        }
+        },
       });
-      res.status(200).send("Message deleted");
+      res.status(200).send('Message deleted');
     } catch (e) {
       console.log(e);
-      res.status(500).send("The specified message does not exist");
+      res.status(500).send('The specified message does not exist');
     }
   }
 );

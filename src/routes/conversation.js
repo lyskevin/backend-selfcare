@@ -15,18 +15,18 @@ router.get(
         [Op.or]: [
           {
             first_user_id: {
-              [Op.eq]: user.id
-            }
+              [Op.eq]: user.id,
+            },
           },
           {
             second_user_id: {
-              [Op.eq]: user.id
-            }
-          }
-        ]
-      }
+              [Op.eq]: user.id,
+            },
+          },
+        ],
+      },
     });
-    res.send(allUserConversations)
+    res.send(allUserConversations);
   }
 );
 
@@ -61,12 +61,12 @@ router.delete(
       const result = await Conversation.destroy({
         where: {
           id: req.params.conversationId,
-        }
+        },
       });
-      res.status(200).send("Conversation deleted");
+      res.status(200).send('Conversation deleted');
     } catch (e) {
       console.log(e);
-      res.status(500).send("The specified conversation does not exist");
+      res.status(500).send('The specified conversation does not exist');
     }
   }
 );

@@ -4,6 +4,7 @@ import JournalBlock from './journalBlock';
 import JournalPage from './journalPage';
 import Message from './message';
 import Conversation from './conversation';
+import { hashPassword } from '../lib/utils';
 
 const { prompts } = require('./prompts/prompts.json');
 
@@ -26,39 +27,49 @@ const seedData = async () => {
   // Users
   const alice = await User.create({
     name: 'ally',
-    alias: 'alice',
+    username: 'alice',
+    password: await hashPassword('123'),
   });
 
   const bob = await User.create({
     name: 'robert',
-    alias: 'bob',
+    username: 'bob',
+    password: await hashPassword('123'),
   });
 
   const charles = await User.create({
     name: 'james charles',
-    alias: 'charles',
-  })
+    username: 'charles',
+    password: await hashPassword('123'),
+  });
 
-  const conversation = await Conversation.create();
-  await conversation.setFirstUser(alice);
-  await conversation.setSecondUser(bob);
+  const conversationAb = await Conversation.create();
+  await conversationAb.setFirstUser(alice);
+  await conversationAb.setSecondUser(bob);
+
+  const conversationBc = await Conversation.create();
+  await conversationBc.setFirstUser(bob);
+  await conversationBc.setSecondUser(charles);
 
   await Message.create({
     url: 'test.com',
   }).then((result) => {
     result.setUser(alice);
+    result.setConversation(conversationAb);
   });
 
   await Message.create({
     url: 'abcd.com',
   }).then((result) => {
     result.setUser(bob);
+    result.setConversation(conversationAb);
   });
 
   await Message.create({
     url: 'youtube.com/jamescharles',
   }).then((result) => {
     result.setUser(charles);
+    result.setConversation(conversationBc);
   });
 
   // JournalPage

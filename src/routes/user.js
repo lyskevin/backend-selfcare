@@ -40,7 +40,7 @@ router.get(
     const blockedUsers = await BlockedUser.findAll({
       where: {
         user_id: user.id,
-      }
+      },
     });
     res.send(blockedUsers);
   }
@@ -60,7 +60,7 @@ router.post(
       user_id: id,
       blocked_user_id: user.id,
     });
-    res.status(200).send("User blocked");
+    res.status(200).send('User blocked');
   }
 );
 
@@ -69,7 +69,7 @@ router.get(
   passport.authenticate('jwt', { session: false }),
   async (req, res) => {
     const user = await User.findByPk(req.params.userId, {
-      attributes:['id', 'name', 'username', 'alias'],
+      attributes: ['id', 'name', 'username', 'alias'],
     });
     res.send(user);
   }
