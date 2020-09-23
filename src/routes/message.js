@@ -55,6 +55,48 @@ router.get(
 );
 
 router.get(
+  '/validCount',
+  passport.authenticate('jwt', { session: false }),
+  async (req, res) => {
+    const { user } = req;
+    try {
+      const blockedUsers = await BlockedUser.findAll({
+        where: {
+          user_id: user.id,
+        },
+        attributes: ['blocked_user_id'],
+      });
+      const blockedUserIds = blockedUsers.map(
+        (record) => record.blocked_user_id
+      );
+
+      const data = await Message.findAndCountAll({
+        where: {
+          is_open: false,
+          [Op.and]: [
+            {
+              user_id: {
+                [Op.notIn]: blockedUserIds,
+              },
+            },
+            {
+              user_id: {
+                [Op.ne]: user.id,
+              },
+            },
+          ],
+        },
+      });
+
+      res.status(200).send({ count: data.count });
+    } catch (e) {
+      console.log(e);
+      res.status(500).send(errorMessage);
+    }
+  }
+)
+
+router.get(
   '/:messageId',
   passport.authenticate('jwt', { session: false }),
   async (req, res) => {
