@@ -12,6 +12,7 @@ import jwt from 'jsonwebtoken';
 import Sequelize from 'sequelize';
 
 const router = Router();
+const errorMessage = 'The server encountered an error while trying to process the request';
 
 /**
  * Normal login
@@ -32,13 +33,13 @@ router.post('/guest', async (req, res) => {
     res.json({ id, name, username, ...tokens });
   } catch (e) {
     console.log(e);
-    res.status(500).send();
+    res.status(500).send(errorMessage);
   }
 });
 
 router.post('/register', async (req, res) => {
   const { username, password } = req.body;
-  if (!username || !password) return res.status(400).send();
+  if (!username || !password) return res.status(400).send('username and password fields cannot be empty');
 
   try {
     const hash = await hashPassword(password);
@@ -58,13 +59,13 @@ router.post('/register', async (req, res) => {
     console.log(e);
     if (e instanceof Sequelize.UniqueConstraintError)
       return res.status(409).send('Username already taken');
-    res.status(500).send();
+    res.status(500).send(errorMessage);
   }
 });
 
 router.post('/login', async (req, res) => {
   const { username, password } = req.body;
-  if (!username || !password) return res.status(400).send();
+  if (!username || !password) return res.status(400).send('username and password fields cannot be empty');
 
   try {
     const user = await User.findOne({ where: { username } });
@@ -84,27 +85,27 @@ router.post('/login', async (req, res) => {
     res.json({ id, name, username, ...tokens });
   } catch (e) {
     console.log(e);
-    res.status(500).send();
+    res.status(500).send(errorMessage);
   }
 });
 
 router.delete('/logout', async (req, res) => {
   try {
     const { refreshToken } = req.body;
-    if (!refreshToken) return res.status(400).send();
+    if (!refreshToken) return res.status(400).send('refreshToken cannot be empty');
 
     await RefreshToken.destroy({ where: { token: refreshToken } });
-    res.status(204).send();
+    res.status(204).send('Successfully logged out');
   } catch (e) {
     console.log(e);
-    res.status(500).send();
+    res.status(500).send(errorMessage);
   }
 });
 
 router.post('/token', async (req, res) => {
   try {
     const { refreshToken } = req.body;
-    if (!refreshToken) return res.status(400).send();
+    if (!refreshToken) return res.status(400).send('refreshToken cannot be empty');
 
     const tokenObj = await RefreshToken.findOne({
       where: { token: refreshToken },
@@ -123,7 +124,7 @@ router.post('/token', async (req, res) => {
     );
   } catch (e) {
     console.log(e);
-    res.status(500).send();
+    res.status(500).send(errorMessage);
   }
 });
 
@@ -135,19 +136,19 @@ router.post(
     const user = req.user;
     if (!user.username) {
       if ((username && !password) || (!username && password))
-        return res.status(400).send();
+        return res.status(400).send('username and password must both be sent for guest accounts');
     }
     user.username = username || user.username;
     user.password =
       (password && (await hashPassword(password))) || user.password;
     try {
       await user.save();
-      res.status(200).send();
+      res.status(200).send('Password changed');
     } catch (e) {
       console.log(e);
       if (e instanceof Sequelize.UniqueConstraintError)
         return res.status(409).send('Username already taken');
-      res.status(500).send();
+      res.status(500).send(errorMessage);
     }
   }
 );
@@ -179,7 +180,7 @@ router.post('/facebook', async (req, res) => {
     res.json({ id, name, username, ...tokens });
   } catch (e) {
     console.log(e);
-    res.status(500).send();
+    res.status(500).send(errorMessage);
   }
 });
 
