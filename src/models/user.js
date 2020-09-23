@@ -13,9 +13,6 @@ const User = db.define(
     name: {
       type: DataTypes.STRING,
     },
-    alias: {
-      type: DataTypes.STRING,
-    },
     username: {
       type: DataTypes.STRING,
       unique: true,

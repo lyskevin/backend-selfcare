@@ -1,5 +1,11 @@
 import db from '../config/database';
 import { DataTypes } from 'sequelize';
+import {
+  uniqueNamesGenerator,
+  adjectives,
+  colors,
+  animals,
+} from 'unique-names-generator';
 
 const Conversation = db.define(
   'conversations',
@@ -8,6 +14,20 @@ const Conversation = db.define(
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
+    },
+    first_alias: {
+      type: DataTypes.STRING,
+      defaultValue: uniqueNamesGenerator({
+        dictionaries: [adjectives, colors, animals],
+        separator: '-',
+      }),
+    },
+    second_alias: {
+      type: DataTypes.STRING,
+      defaultValue: uniqueNamesGenerator({
+        dictionaries: [adjectives, colors, animals],
+        separator: '-',
+      }),
     },
   },
   {

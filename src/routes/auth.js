@@ -20,7 +20,7 @@ const router = Router();
 router.post('/guest', async (req, res) => {
   try {
     const user = await User.create();
-    const { id, fb_id, name, alias, username } = user;
+    const { id, fb_id, name, username } = user;
 
     const tokens = generateAccessAndRefreshTokens(user);
     const { refreshToken } = tokens;
@@ -29,7 +29,7 @@ router.post('/guest', async (req, res) => {
     });
     tokenObj.setUser(user);
 
-    res.json({ id, fb_id, name, alias, username, ...tokens });
+    res.json({ id, fb_id, name, username, ...tokens });
   } catch (e) {
     console.log(e);
     res.status(500).send();
@@ -44,7 +44,7 @@ router.post('/register', async (req, res) => {
     const hash = await hashPassword(password);
 
     const user = await User.create({ username, password: hash });
-    const { id, fb_id, name, alias } = user;
+    const { id, fb_id, name } = user;
 
     const tokens = generateAccessAndRefreshTokens(user);
     const { refreshToken } = tokens;
@@ -53,7 +53,7 @@ router.post('/register', async (req, res) => {
     });
     tokenObj.setUser(user);
 
-    res.json({ id, fb_id, name, alias, username, ...tokens });
+    res.json({ id, fb_id, name, username, ...tokens });
   } catch (e) {
     console.log(e);
     if (e instanceof Sequelize.UniqueConstraintError)
@@ -69,7 +69,7 @@ router.post('/login', async (req, res) => {
   try {
     const user = await User.findOne({ where: { username } });
     if (!user) return res.status(401).send('User not found');
-    const { id, fb_id, name, alias } = user;
+    const { id, fb_id, name } = user;
 
     const isValid = await bcrypt.compare(password, user.password);
     if (!isValid) return res.status(401).send('Wrong password');
@@ -81,7 +81,7 @@ router.post('/login', async (req, res) => {
     });
     tokenObj.setUser(user);
 
-    res.json({ id, fb_id, name, alias, username, ...tokens });
+    res.json({ id, fb_id, name, username, ...tokens });
   } catch (e) {
     console.log(e);
     res.status(500).send();
@@ -167,7 +167,7 @@ router.get(
   async (req, res) => {
     try {
       const { user } = req;
-      const { id, fb_id, name, alias, username } = user;
+      const { id, fb_id, name, username } = user;
 
       const tokens = generateAccessAndRefreshTokens(user);
       const { refreshToken } = tokens;
@@ -175,7 +175,7 @@ router.get(
         token: refreshToken,
       });
       tokenObj.setUser(user);
-      res.json({ id, fb_id, name, alias, username, ...tokens });
+      res.json({ id, fb_id, name, username, ...tokens });
     } catch (e) {
       console.log(e);
       res.status(500).send();

@@ -10,23 +10,28 @@ router.get(
   passport.authenticate('jwt', { session: false }),
   async (req, res) => {
     const { user } = req;
-    const allUserConversations = await Conversation.findAll({
-      where: {
-        [Op.or]: [
-          {
-            first_user_id: {
-              [Op.eq]: user.id
-            }
-          },
-          {
-            second_user_id: {
-              [Op.eq]: user.id
-            }
-          }
-        ]
-      }
-    });
-    res.send(allUserConversations)
+    try {
+      const allUserConversations = await Conversation.findAll({
+        where: {
+          [Op.or]: [
+            {
+              first_user_id: {
+                [Op.eq]: user.id,
+              },
+            },
+            {
+              second_user_id: {
+                [Op.eq]: user.id,
+              },
+            },
+          ],
+        },
+      });
+      res.send(allUserConversations);
+    } catch (e) {
+      console.log(e);
+      res.status(500).send();
+    }
   }
 );
 
@@ -34,8 +39,16 @@ router.get(
   '/:conversationId',
   passport.authenticate('jwt', { session: false }),
   async (req, res) => {
-    const conversation = await Conversation.findByPk(req.params.conversationId);
-    res.send(conversation);
+    try {
+      const conversation = await Conversation.findByPk(
+        req.params.conversationId
+      );
+      if (!conversation) return res.status(404).send('Conversation not found');
+      res.send(conversation);
+    } catch (e) {
+      console.log(e);
+      res.status(500).send();
+    }
   }
 );
 
@@ -45,11 +58,18 @@ router.post(
   async (req, res) => {
     const { user } = req;
     const { secondUserId } = req.body;
-    const conversation = await Conversation.create({
-      first_user_id: user.id,
-      second_user_id: secondUserId,
-    });
-    res.send(conversation);
+    if (!secondUserId) return res.send(400).send('Missing second user id');
+
+    try {
+      const conversation = await Conversation.create({
+        first_user_id: user.id,
+        second_user_id: secondUserId,
+      });
+      res.send(conversation);
+    } catch (e) {
+      console.log(e);
+      res.status(500).send();
+    }
   }
 );
 
@@ -61,12 +81,12 @@ router.delete(
       const result = await Conversation.destroy({
         where: {
           id: req.params.conversationId,
-        }
+        },
       });
-      res.status(200).send("Conversation deleted");
+      res.status(200).send('Conversation deleted');
     } catch (e) {
       console.log(e);
-      res.status(500).send("The specified conversation does not exist");
+      res.status(500).send('The specified conversation does not exist');
     }
   }
 );

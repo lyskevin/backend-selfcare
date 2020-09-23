@@ -15,7 +15,7 @@ const Message = db.define(
     },
     url: {
       type: DataTypes.TEXT,
-    }
+    },
   },
   {
     timestamps: true,
