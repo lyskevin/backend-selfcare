@@ -183,8 +183,4 @@ router.post('/facebook', async (req, res) => {
   }
 });
 
-router.get('/fail', (req, res) =>
-  res.status(401).send('Failed to login to Facebook')
-);
-
 export default router;
