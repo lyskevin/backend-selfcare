@@ -143,7 +143,7 @@ router.post(
       (password && (await hashPassword(password))) || user.password;
     try {
       await user.save();
-      res.status(200).send('Password changed');
+      res.status(200).send('Credentials updated');
     } catch (e) {
       console.log(e);
       if (e instanceof Sequelize.UniqueConstraintError)
