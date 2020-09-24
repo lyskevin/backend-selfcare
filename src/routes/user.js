@@ -10,23 +10,8 @@ router.get(
   '/profile',
   passport.authenticate('jwt', { session: false }),
   (req, res) => {
-    const { id, fb_id, name, username } = req.user;
-    res.status(200).send({ id, fb_id, name, username });
-  }
-);
-
-router.post(
-  '/profile',
-  passport.authenticate('jwt', { session: false }),
-  async (req, res) => {
-    const user = req.user;
-    try {
-      await user.save();
-      res.status(200).send('User created');
-    } catch (e) {
-      console.log(e);
-      res.status(500).send(errorMessage);
-    }
+    const { id, fb_id, username } = req.user;
+    res.status(200).send({ id, fb_id, username });
   }
 );
 
