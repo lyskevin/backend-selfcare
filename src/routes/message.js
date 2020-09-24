@@ -14,15 +14,29 @@ router.get(
   async (req, res) => {
     const { user } = req;
     try {
-      const blockedUsers = await BlockedUser.findAll({
+      const usersBlockedByCurrentUser = await BlockedUser.findAll({
         where: {
           user_id: user.id,
         },
         attributes: ['blocked_user_id'],
       });
-      const blockedUserIds = blockedUsers.map(
-        (record) => record.blocked_user_id
+
+      const usersBlockingCurrentUser = await BlockedUser.findAll({
+        where: {
+          blocked_user_id: user.id,
+        },
+        attributes: ['user_id'],
+      });
+
+      const blockedIds = usersBlockedByCurrentUser.map(
+        (blockedUser) => blockedUser.blocked_user_id
       );
+
+      const blockingIds = usersBlockingCurrentUser.map(
+        (blockingUser) => blockingUser.user_id
+      );
+
+      const allFilteredIds = blockedIds.concat(blockingIds);
 
       const randomUnopenedMessage = await Message.findOne({
         where: {
@@ -30,7 +44,7 @@ router.get(
           [Op.and]: [
             {
               user_id: {
-                [Op.notIn]: blockedUserIds,
+                [Op.notIn]: allFilteredIds,
               },
             },
             {
@@ -60,23 +74,37 @@ router.get(
   async (req, res) => {
     const { user } = req;
     try {
-      const blockedUsers = await BlockedUser.findAll({
+      const usersBlockedByCurrentUser = await BlockedUser.findAll({
         where: {
           user_id: user.id,
         },
         attributes: ['blocked_user_id'],
       });
-      const blockedUserIds = blockedUsers.map(
-        (record) => record.blocked_user_id
+
+      const usersBlockingCurrentUser = await BlockedUser.findAll({
+        where: {
+          blocked_user_id: user.id,
+        },
+        attributes: ['user_id'],
+      });
+
+      const blockedIds = usersBlockedByCurrentUser.map(
+        (blockedUser) => blockedUser.blocked_user_id
       );
 
-      const data = await Message.findAndCountAll({
+      const blockingIds = usersBlockingCurrentUser.map(
+        (blockingUser) => blockingUser.user_id
+      );
+
+      const allFilteredIds = blockedIds.concat(blockingIds);
+
+      const allFilteredEntries = await Message.findAndCountAll({
         where: {
           is_open: false,
           [Op.and]: [
             {
               user_id: {
-                [Op.notIn]: blockedUserIds,
+                [Op.notIn]: allFilteredIds,
               },
             },
             {
@@ -88,7 +116,7 @@ router.get(
         },
       });
 
-      res.status(200).send({ count: data.count });
+      res.status(200).send({ count: allFilteredEntries.count });
     } catch (e) {
       console.log(e);
       res.status(500).send(errorMessage);
