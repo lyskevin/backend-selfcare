@@ -19,14 +19,18 @@ const Conversation = db.define(
       type: DataTypes.STRING,
       defaultValue: uniqueNamesGenerator({
         dictionaries: [adjectives, colors, animals],
-        separator: '-',
+        style: 'capital',
+        separator: ' ',
+        seed: Math.random() * 1000000,
       }),
     },
     second_alias: {
       type: DataTypes.STRING,
       defaultValue: uniqueNamesGenerator({
         dictionaries: [adjectives, colors, animals],
-        separator: '-',
+        style: 'capital',
+        separator: ' ',
+        seed: Math.random() * 1000000,
       }),
     },
   },
