@@ -23,7 +23,9 @@ db.sync({ force: eraseDatabaseOnSync })
   .then(() => {
     //seedData();
 
-    app.use(httpsRedirect);
+    if (!process.env.DEV) {
+      app.use(httpsRedirect);
+    }
 
     app.use('/auth', routes.auth);
     app.use('/user', routes.user);
