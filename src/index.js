@@ -35,4 +35,3 @@ app.use('/user', routes.user);
 app.use('/journal', routes.journal);
 app.use('/message', routes.message);
 app.use('/conversation', routes.conversation);
-app.use('/', routes.index); // Delete for production!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
