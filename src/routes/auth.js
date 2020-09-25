@@ -22,7 +22,7 @@ const errorMessage =
 router.post('/guest', async (req, res) => {
   try {
     const user = await User.create();
-    const { id, username } = user;
+    const { id } = user;
 
     const tokens = generateAccessAndRefreshTokens(user);
     const { refreshToken } = tokens;
@@ -31,7 +31,7 @@ router.post('/guest', async (req, res) => {
     });
     tokenObj.setUser(user);
 
-    res.json({ id, username, ...tokens });
+    res.json({ id, ...tokens });
   } catch (e) {
     console.log(e);
     res.status(500).send(errorMessage);
@@ -56,7 +56,7 @@ router.post('/register', async (req, res) => {
     });
     tokenObj.setUser(user);
 
-    res.json({ id, username, ...tokens });
+    res.json({ id, ...tokens });
   } catch (e) {
     console.log(e);
     if (e instanceof Sequelize.UniqueConstraintError)
@@ -85,7 +85,7 @@ router.post('/login', async (req, res) => {
     });
     tokenObj.setUser(user);
 
-    res.json({ id, username, ...tokens });
+    res.json({ id, ...tokens });
   } catch (e) {
     console.log(e);
     res.status(500).send(errorMessage);
@@ -122,8 +122,7 @@ router.post('/token', async (req, res) => {
       process.env.REFRESH_TOKEN_SECRET,
       async (err, payload) => {
         if (err) return res.status(403).send('Invalid token');
-        const user = await User.findByPk(payload.sub);
-        const accessToken = generateAccessToken(user);
+        const accessToken = generateAccessToken({ id: payload.sub });
         res.send({ accessToken });
       }
     );
@@ -138,7 +137,7 @@ router.post(
   passport.authenticate('jwt', { session: false }),
   async (req, res) => {
     const { username, password } = req.body;
-    const user = req.user;
+    const { user } = req;
     if (!user.username) {
       if ((username && !password) || (!username && password))
         return res
@@ -176,7 +175,7 @@ router.post('/facebook', async (req, res) => {
         fb_id: fbId,
       },
     });
-    const { id, username } = user;
+    const { id } = user;
 
     const tokens = generateAccessAndRefreshTokens(user);
     const { refreshToken } = tokens;
@@ -185,7 +184,7 @@ router.post('/facebook', async (req, res) => {
     });
     tokenObj.setUser(user);
 
-    res.json({ id, username, ...tokens });
+    res.json({ id, ...tokens });
   } catch (e) {
     console.log(e);
     res.status(500).send(errorMessage);

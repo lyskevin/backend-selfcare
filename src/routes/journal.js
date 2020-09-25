@@ -6,14 +6,16 @@ import { Op } from 'sequelize';
 import db from '../config/database';
 
 const router = Router();
-const errorMessage = 'The server encountered an error while trying to process the request';
+const errorMessage =
+  'The server encountered an error while trying to process the request';
 
 router.get(
   '/page/range',
   passport.authenticate('jwt', { session: false }),
   async (req, res) => {
     const { start, end } = req.query;
-    if (!start || !end) return res.status(400).send('start and end must both be specified');
+    if (!start || !end)
+      return res.status(400).send('start and end must both be specified');
 
     const { user } = req;
     try {

@@ -10,8 +10,10 @@ const errorMessage =
 router.get(
   '/profile',
   passport.authenticate('jwt', { session: false }),
-  (req, res) => {
-    const { id, username } = req.user;
+  async (req, res) => {
+    const { user } = req;
+    const { id } = user;
+    const { username } = await User.findByPk(id);
     res.status(200).send({ id, username });
   }
 );
