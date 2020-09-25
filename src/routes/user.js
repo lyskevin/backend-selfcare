@@ -4,14 +4,15 @@ import BlockedUser from '../models/blockedUser';
 import User from '../models/user';
 
 const router = Router();
-const errorMessage = 'The server encountered an error while trying to process the request';
+const errorMessage =
+  'The server encountered an error while trying to process the request';
 
 router.get(
   '/profile',
   passport.authenticate('jwt', { session: false }),
   (req, res) => {
-    const { id, fb_id, username } = req.user;
-    res.status(200).send({ id, fb_id, username });
+    const { id, username } = req.user;
+    res.status(200).send({ id, username });
   }
 );
 

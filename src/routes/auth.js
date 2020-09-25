@@ -12,7 +12,8 @@ import jwt from 'jsonwebtoken';
 import Sequelize from 'sequelize';
 
 const router = Router();
-const errorMessage = 'The server encountered an error while trying to process the request';
+const errorMessage =
+  'The server encountered an error while trying to process the request';
 
 /**
  * Normal login
@@ -39,7 +40,8 @@ router.post('/guest', async (req, res) => {
 
 router.post('/register', async (req, res) => {
   const { username, password } = req.body;
-  if (!username || !password) return res.status(400).send('username and password fields cannot be empty');
+  if (!username || !password)
+    return res.status(400).send('username and password fields cannot be empty');
 
   try {
     const hash = await hashPassword(password);
@@ -65,7 +67,8 @@ router.post('/register', async (req, res) => {
 
 router.post('/login', async (req, res) => {
   const { username, password } = req.body;
-  if (!username || !password) return res.status(400).send('username and password fields cannot be empty');
+  if (!username || !password)
+    return res.status(400).send('username and password fields cannot be empty');
 
   try {
     const user = await User.findOne({ where: { username } });
@@ -92,7 +95,8 @@ router.post('/login', async (req, res) => {
 router.delete('/logout', async (req, res) => {
   try {
     const { refreshToken } = req.body;
-    if (!refreshToken) return res.status(400).send('refreshToken cannot be empty');
+    if (!refreshToken)
+      return res.status(400).send('refreshToken cannot be empty');
 
     await RefreshToken.destroy({ where: { token: refreshToken } });
     res.status(204).send();
@@ -105,7 +109,8 @@ router.delete('/logout', async (req, res) => {
 router.post('/token', async (req, res) => {
   try {
     const { refreshToken } = req.body;
-    if (!refreshToken) return res.status(400).send('refreshToken cannot be empty');
+    if (!refreshToken)
+      return res.status(400).send('refreshToken cannot be empty');
 
     const tokenObj = await RefreshToken.findOne({
       where: { token: refreshToken },
@@ -136,7 +141,11 @@ router.post(
     const user = req.user;
     if (!user.username) {
       if ((username && !password) || (!username && password))
-        return res.status(400).send('username and password must both be sent for guest accounts');
+        return res
+          .status(400)
+          .send(
+            'Username and password must both be sent if there is no username yet.'
+          );
     }
     user.username = username || user.username;
     user.password =
